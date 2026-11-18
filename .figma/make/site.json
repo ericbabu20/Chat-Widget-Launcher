@@ -1,0 +1,10 @@
+{
+  "description": "A customer support web app featuring a prominent chat widget that helps visitors quickly connect with the team for assistance.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

@@ -1,0 +1,766 @@
+/* =========================================================
+   Outfox chat launcher (src/chat)
+   Every class uses the cl- prefix so it never clashes with the
+   older chat styles still in src/index.css.
+   ========================================================= */
+
+:root {
+  --cl-purple: #7100f1;
+  --cl-purple-deep: #5d00c9;
+  --cl-lilac: #f5edff;
+  --cl-ink: #001e28;
+  --cl-ink-soft: #1f3138;
+  --cl-green: #22c55e;
+  --cl-font: "Mundial:Regular", Arial, sans-serif;
+  --cl-font-strong: "Mundial:Demibold", Arial, sans-serif;
+  /* Stacking order: page content < launcher (50) < open chat (55) < cookie banner (80, future) < modals (90) */
+  --cl-z: 50;
+  --cl-z-panel: 55;
+}
+
+.cl-root {
+  display: contents;
+}
+
+.cl-root :focus-visible {
+  outline: 3px solid var(--cl-purple);
+  outline-offset: 3px;
+}
+
+/* ---------- Glass ---------- */
+
+.cl-glass {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 8px 32px rgba(40, 0, 90, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  color: var(--cl-ink);
+}
+
+/* Purple tint. Dark text is used on it, because white text fails contrast on light glass. */
+.cl-glass--purple {
+  background: rgba(112, 0, 255, 0.35);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .cl-glass {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .cl-glass--purple {
+    background: #e9dcff;
+  }
+}
+
+/* ---------- Motion ---------- */
+
+.cl-enter {
+  animation: cl-rise 420ms cubic-bezier(0.2, 0.8, 0.2, 1) 1.5s both;
+}
+
+@keyframes cl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes cl-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cl-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes cl-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+  }
+}
+
+/* ---------- Avatars and status dot ---------- */
+
+.cl-avatars {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+.cl-avatar {
+  display: grid;
+  width: var(--cl-avatar-size, 32px);
+  height: var(--cl-avatar-size, 32px);
+  flex: 0 0 auto;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #9b5cff, var(--cl-purple));
+  color: #ffffff;
+  font-family: var(--cl-font-strong);
+  font-size: calc(var(--cl-avatar-size, 32px) * 0.42);
+}
+
+.cl-avatar + .cl-avatar {
+  margin-left: calc(var(--cl-avatar-size, 32px) * -0.3);
+}
+
+.cl-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cl-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  background: var(--cl-green);
+}
+
+.cl-dot--offline {
+  background: #9ca3af;
+}
+
+.cl-dot--online {
+  animation: cl-pulse 2.4s ease-in-out infinite;
+}
+
+.cl-avatars > .cl-dot {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  z-index: 5;
+}
+
+/* ---------- Desktop floating pill ---------- */
+
+.cl-desktop {
+  position: fixed;
+  right: calc(24px + env(safe-area-inset-right));
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: var(--cl-z);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.cl-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  max-width: 440px;
+  padding: 8px 20px 8px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--cl-font);
+  text-align: left;
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    max-width 280ms ease,
+    padding 280ms ease;
+}
+
+.cl-pill:hover,
+.cl-pill:focus-visible {
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 40px rgba(40, 0, 90, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.cl-pill.is-compact {
+  max-width: 68px;
+  padding: 6px;
+  justify-content: center;
+}
+
+.cl-pill.is-compact:hover,
+.cl-pill.is-compact:focus-visible {
+  max-width: 440px;
+  padding: 8px 20px 8px 10px;
+  justify-content: flex-start;
+}
+
+.cl-pill__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 320px;
+  overflow: hidden;
+  white-space: nowrap;
+  transition:
+    max-width 280ms ease,
+    opacity 200ms ease;
+}
+
+.cl-pill.is-compact .cl-pill__text {
+  max-width: 0;
+  opacity: 0;
+}
+
+.cl-pill.is-compact:hover .cl-pill__text,
+.cl-pill.is-compact:focus-visible .cl-pill__text {
+  max-width: 320px;
+  opacity: 1;
+}
+
+.cl-pill__text strong {
+  font-family: var(--cl-font-strong);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.cl-pill__text small {
+  color: var(--cl-ink-soft);
+  font-family: var(--cl-font);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.cl-pill__label {
+  padding-right: 4px;
+  font-family: var(--cl-font-strong);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ---------- Mobile + tablet dock ---------- */
+
+.cl-dock {
+  position: fixed;
+  right: calc(16px + env(safe-area-inset-right));
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  left: auto;
+  z-index: var(--cl-z);
+  width: max-content;
+  max-width: calc(100vw - 32px);
+}
+
+.cl-dock__bar {
+  box-sizing: border-box;
+  display: flex;
+  width: max-content;
+  max-width: 100%;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 22px;
+  /* More solid than the shared glass: the page was showing through too strongly. */
+  background: rgba(255, 255, 255, 0.94);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  backdrop-filter: blur(8px) saturate(120%);
+}
+
+.cl-dock__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--cl-ink-soft);
+  font-size: 13px;
+}
+
+.cl-dock__pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 16px 8px 8px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(113, 0, 241, 0.94);
+  color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  -webkit-backdrop-filter: blur(6px) saturate(120%);
+  backdrop-filter: blur(6px) saturate(120%);
+}
+
+.cl-dock__pill .cl-pill__text small {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cl-dock__pill:hover {
+  background: var(--cl-purple-deep);
+}
+
+/* Phones (under 640px): full-width dark bar along the bottom, as in the W1 reference. */
+@media (max-width: 639px) {
+  .cl-dock {
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-width: none;
+  }
+
+  .cl-dock__bar {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    border-radius: 20px 20px 0 0;
+    border: 0;
+    background: rgba(0, 30, 40, 0.96);
+    box-shadow: 0 -8px 24px rgba(0, 20, 30, 0.25);
+  }
+
+  .cl-dock__status {
+    color: #ffffff;
+  }
+
+  .cl-dock__pill {
+    background: #0f3646;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  }
+
+  .cl-dock__pill:hover {
+    background: #164a5c;
+  }
+}
+
+.cl-dock-compact {
+  position: fixed;
+  right: calc(18px + env(safe-area-inset-right));
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  z-index: var(--cl-z);
+}
+
+.cl-pill--mini {
+  min-height: 52px;
+  padding: 6px 16px 6px 6px;
+}
+
+/* ---------- Peek card (mobile variant "peek") ---------- */
+
+.cl-peek {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--cl-z);
+  box-sizing: border-box;
+  display: flex;
+  width: min(480px, 100%);
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 auto;
+  padding: 10px 18px calc(18px + env(safe-area-inset-bottom));
+  border-radius: 20px 20px 0 0;
+  cursor: pointer;
+  animation: cl-sheet-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.cl-sheet__handle {
+  width: 40px;
+  height: 5px;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: rgba(0, 30, 40, 0.25);
+}
+
+.cl-peek__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cl-peek__who {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cl-peek__who strong {
+  font-family: var(--cl-font-strong);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.cl-peek__who small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cl-ink-soft);
+  font-size: 13px;
+}
+
+/* ---------- Conversation strip (mobile variant "strip") ---------- */
+
+.cl-strip {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--cl-z);
+  box-sizing: border-box;
+  display: flex;
+  width: min(480px, 100%);
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 auto;
+  padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
+  border-radius: 20px 20px 0 0;
+}
+
+.cl-strip__chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cl-strip__chips::-webkit-scrollbar {
+  display: none;
+}
+
+.cl-chip {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--cl-ink);
+  font-family: var(--cl-font-strong);
+  font-size: 14px;
+  cursor: pointer;
+  scroll-snap-align: start;
+}
+
+.cl-chip:hover {
+  background: var(--cl-lilac);
+}
+
+.cl-strip__field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 6px 6px 6px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--cl-ink-soft);
+  font-family: var(--cl-font);
+  font-size: 16px;
+  text-align: left;
+  cursor: text;
+}
+
+.cl-strip__send {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--cl-purple);
+  color: #ffffff;
+}
+
+/* ---------- Shared bubbles, buttons, inputs ---------- */
+
+.cl-bubble {
+  max-width: 88%;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--cl-ink);
+  font-family: var(--cl-font);
+  font-size: 15px;
+  line-height: 1.4;
+  box-shadow: 0 2px 10px rgba(40, 0, 90, 0.08);
+}
+
+.cl-bubble--agent {
+  align-self: flex-start;
+  border-top-left-radius: 6px;
+}
+
+.cl-btn-primary {
+  min-height: 48px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cl-purple);
+  color: #ffffff;
+  font-family: var(--cl-font-strong);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.cl-btn-primary:hover {
+  background: var(--cl-purple-deep);
+}
+
+.cl-icon-btn {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--cl-ink);
+  cursor: pointer;
+}
+
+.cl-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Chat panel (open chat) ---------- */
+
+.cl-panel {
+  z-index: var(--cl-z-panel);
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--cl-ink);
+}
+
+/* Desktop: 380 x 560 window, anchored bottom-right above the pill */
+.cl-panel--panel {
+  position: fixed;
+  right: calc(24px + env(safe-area-inset-right));
+  width: 380px;
+  height: 560px;
+  max-height: calc(100dvh - 140px);
+  border-radius: 20px;
+  animation: cl-rise 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Tablet: centred bottom sheet, 480px wide, 90% of the visible height */
+.cl-panel--sheet {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: min(480px, 100%);
+  height: 90dvh;
+  margin: 0 auto;
+  border-radius: 20px 20px 0 0;
+  animation: cl-sheet-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Phone: full screen, sized to the visual viewport so the composer sits above the keyboard */
+.cl-panel--fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: var(--vvh, 100dvh);
+  border-radius: 0;
+  animation: cl-sheet-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.cl-panel--fullscreen .cl-panel__header {
+  padding-top: calc(14px + env(safe-area-inset-top));
+}
+
+.cl-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.cl-panel__who {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.cl-panel__who strong {
+  font-family: var(--cl-font-strong);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.cl-panel__who small {
+  color: var(--cl-ink-soft);
+  font-size: 13px;
+}
+
+.cl-panel__list {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.cl-msg {
+  max-width: 85%;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-family: var(--cl-font);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.cl-msg--agent {
+  align-self: flex-start;
+  border-top-left-radius: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--cl-ink);
+}
+
+.cl-msg--customer {
+  align-self: flex-end;
+  border-top-right-radius: 6px;
+  background: var(--cl-purple);
+  color: #ffffff;
+}
+
+.cl-typing {
+  margin: 0;
+  color: var(--cl-ink-soft);
+  font-size: 13px;
+}
+
+.cl-panel__composer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* 16px or more stops iOS Safari zooming in when the field is focused */
+.cl-input {
+  min-width: 0;
+  min-height: 44px;
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid rgba(40, 0, 90, 0.2);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--cl-ink);
+  font-family: var(--cl-font);
+  font-size: 16px;
+}
+
+.cl-input:focus-visible {
+  outline: 3px solid var(--cl-purple);
+  outline-offset: 2px;
+}
+
+.cl-send {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cl-purple);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.cl-send:hover:not(:disabled) {
+  background: var(--cl-purple-deep);
+}
+
+.cl-send:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---------- Space for the dock on mobile (set from ChatLauncher) ---------- */
+
+:root.chat-has-dock .landing-page {
+  padding-bottom: calc(140px + env(safe-area-inset-bottom));
+}
+
+:root.chat-has-dock[data-chat-variant="strip"] .landing-page {
+  padding-bottom: calc(190px + env(safe-area-inset-bottom));
+}
+
+:root.chat-has-dock[data-chat-variant="peek"] .landing-page {
+  padding-bottom: calc(250px + env(safe-area-inset-bottom));
+}
+
+/* ---------- Reduced motion: fades only ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-enter {
+    animation: cl-fade 300ms ease 1.5s both;
+  }
+
+  .cl-panel--panel,
+  .cl-panel--sheet,
+  .cl-panel--fullscreen,
+  .cl-peek {
+    animation: cl-fade 200ms ease both;
+  }
+
+  .cl-dot--online {
+    animation: none;
+  }
+
+  .cl-pill,
+  .cl-pill__text {
+    transition: none;
+  }
+
+  .cl-pill:hover,
+  .cl-pill:focus-visible {
+    transform: none;
+  }
+}

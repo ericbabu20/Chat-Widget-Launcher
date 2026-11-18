@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Feather Icons/fi:map-pin" clip-path="url(#clip0_0_277)">
+<path id="Vector" d="M14 6.66663C14 11.3333 7.99996 15.3333 7.99996 15.3333C7.99996 15.3333 1.99996 11.3333 1.99996 6.66663C1.99996 5.07533 2.6321 3.54921 3.75732 2.42399C4.88254 1.29877 6.40866 0.666632 7.99996 0.666632C9.59126 0.666632 11.1174 1.29877 12.2426 2.42399C13.3678 3.54921 14 5.07533 14 6.66663Z" stroke-width="1.66678" stroke-linecap="round" stroke-linejoin="round" stroke="#F8F6F3"/>
+<path id="Vector_2" d="M10.0003 6.66679C10.0003 7.77149 9.10472 8.66702 8.00002 8.66702C6.89533 8.66702 5.99979 7.77149 5.99979 6.66679C5.99979 5.56209 6.89533 4.66656 8.00002 4.66656C9.10472 4.66656 10.0003 5.56209 10.0003 6.66679Z" stroke-width="1.66678" stroke-linecap="round" stroke-linejoin="round" stroke="#F8F6F3"/>
+</g>
+<defs>
+<clipPath id="clip0_0_277">
+<rect width="16" height="16" fill="white"/>
+</clipPath>
+</defs>
+</svg>
