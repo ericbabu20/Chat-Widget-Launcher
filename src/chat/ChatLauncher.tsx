@@ -1,7 +1,8 @@
-import { lazy, Suspense, useEffect, useId, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useId, useMemo, useRef, useState } from "react";
 import { OPEN_CHAT_EVENT } from "../openChat";
 import "./chat.css";
 import { ConversationStrip } from "./ConversationStrip";
+import { DEFAULT_NEXT_AVAILABLE_TEXT, type LauncherCopyOverride, resolveLauncherCopy } from "./copy";
 import { DesktopLauncher } from "./DesktopLauncher";
 import { DockBar } from "./DockBar";
 import { PeekCard } from "./PeekCard";
@@ -30,6 +31,10 @@ export type ChatLauncherProps = {
   requireConsentBeforeLoad: boolean;
   /** Extra space (px) above the launcher, e.g. for a cookie banner or a sticky button. */
   bottomOffset: number;
+  /** Ends the offline line, e.g. "at 9am tomorrow". Defaults to "as soon as we're back". */
+  nextAvailableText?: string;
+  /** Optional per-page override of the launcher wording. See copy.ts. */
+  copy?: LauncherCopyOverride;
 };
 
 export function ChatLauncher({
@@ -45,6 +50,8 @@ export function ChatLauncher({
   messages,
   requireConsentBeforeLoad,
   bottomOffset,
+  nextAvailableText = DEFAULT_NEXT_AVAILABLE_TEXT,
+  copy,
 }: ChatLauncherProps) {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
@@ -56,7 +63,9 @@ export function ChatLauncher({
   const [teaserDismissed, setTeaserDismissed] = useState(false);
   const [pendingTopic, setPendingTopic] = useState<string | undefined>(undefined);
   const launcherRef = useRef<HTMLButtonElement>(null);
+  const dockRef = useRef<HTMLDivElement>(null);
   const controlsId = useId();
+  const resolvedCopy = useMemo(() => resolveLauncherCopy(copy), [copy]);
 
   const layout = isDesktop ? "panel" : isTablet ? "sheet" : "fullscreen";
   const hidden = requireConsentBeforeLoad && !consent.consented;
@@ -75,6 +84,24 @@ export function ChatLauncher({
       delete root.dataset.chatVariant;
     };
   }, [isDesktop, hidden, variant]);
+
+  // Match the page's bottom spacer to the dock's real height (plus its gap from the screen edge).
+  useEffect(() => {
+    const dock = dockRef.current;
+    if (isDesktop || hidden || !dock) return;
+    const root = document.documentElement;
+    const measure = () => {
+      const gap = parseFloat(getComputedStyle(dock).bottom) || 0;
+      root.style.setProperty("--cl-dock-space", `${Math.ceil(dock.offsetHeight + gap)}px`);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(dock);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--cl-dock-space");
+    };
+  }, [isDesktop, hidden, variant, pastHero, open, offset]);
 
   // The header chat icon and the desktop Help Centre menu both dispatch this event.
   useEffect(() => {
@@ -105,10 +132,13 @@ export function ChatLauncher({
       agents,
       agentsOnline,
       replyTimeMins,
+      nextAvailableText,
+      copy: resolvedCopy,
       controlsId,
       expanded: open,
       bottomOffset: offset,
       buttonRef: launcherRef,
+      dockRef,
       onActivate: () => openChat(),
     };
 
@@ -154,7 +184,9 @@ export function ChatLauncher({
           buttonRef={launcherRef}
           compact={pastHero && !open}
           controlsId={controlsId}
+          copy={resolvedCopy}
           expanded={open}
+          nextAvailableText={nextAvailableText}
           onActivate={() => (open ? closeChat() : openChat())}
           onDismissTeaser={() => setTeaserDismissed(true)}
           replyTimeMins={replyTimeMins}

@@ -1,11 +1,14 @@
 import type { RefObject } from "react";
 import { AgentAvatars, CloseIcon } from "./ChatParts";
+import { getLauncherText, type LauncherCopy } from "./copy";
 import type { Agent } from "./types";
 
 type DesktopLauncherProps = {
   agents: Agent[];
   agentsOnline: boolean;
   replyTimeMins: number;
+  nextAvailableText: string;
+  copy: LauncherCopy;
   controlsId: string;
   expanded: boolean;
   compact: boolean;
@@ -21,6 +24,8 @@ export function DesktopLauncher({
   agents,
   agentsOnline,
   replyTimeMins,
+  nextAvailableText,
+  copy,
   controlsId,
   expanded,
   compact,
@@ -30,6 +35,9 @@ export function DesktopLauncher({
   onActivate,
   onDismissTeaser,
 }: DesktopLauncherProps) {
+  const text = getLauncherText({ copy, agentsOnline, replyTimeMins, nextAvailableText, narrow: false });
+  const label = expanded ? "Close chat" : compact ? text.collapsedLabel : text.ariaLabel;
+
   return (
     <div className="cl-desktop cl-enter" style={{ bottom: `calc(24px + env(safe-area-inset-bottom) + ${bottomOffset}px)` }}>
       {showTeaser && (
@@ -45,7 +53,7 @@ export function DesktopLauncher({
       <button
         aria-controls={controlsId}
         aria-expanded={expanded}
-        aria-label={expanded ? "Close chat" : "Chat to a real person. Not a bot."}
+        aria-label={label}
         className={`cl-glass cl-pill ${compact ? "is-compact" : ""}`}
         onClick={onActivate}
         ref={buttonRef}
@@ -53,8 +61,8 @@ export function DesktopLauncher({
       >
         <AgentAvatars agents={agents} online={agentsOnline} />
         <span className="cl-pill__text">
-          <strong>{expanded ? "Close chat" : "Chat to a real person"}</strong>
-          <small>Not a bot · replies in ~{replyTimeMins} min</small>
+          <strong>{expanded ? "Close chat" : text.line1}</strong>
+          <small>{text.line2}</small>
         </span>
       </button>
     </div>

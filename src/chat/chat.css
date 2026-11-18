@@ -273,9 +273,8 @@
   width: max-content;
   max-width: 100%;
   flex-direction: column;
-  gap: 10px;
   margin: 0;
-  padding: 12px 14px;
+  padding: 8px 14px 12px;
   border-radius: 22px;
   /* More solid than the shared glass: the page was showing through too strongly. */
   background: rgba(255, 255, 255, 0.94);
@@ -283,13 +282,9 @@
   backdrop-filter: blur(8px) saturate(120%);
 }
 
-.cl-dock__status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  color: var(--cl-ink-soft);
-  font-size: 13px;
+/* The green dot sits on the avatar. Its ring matches the dock background. */
+.cl-dock .cl-avatars > .cl-dot {
+  border-color: #ffffff;
 }
 
 .cl-dock__pill {
@@ -331,20 +326,28 @@
     width: 100%;
     max-width: none;
     margin: 0;
-    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    padding: 8px 16px max(8px, env(safe-area-inset-bottom));
     border-radius: 20px 20px 0 0;
     border: 0;
     background: rgba(0, 30, 40, 0.96);
     box-shadow: 0 -8px 24px rgba(0, 20, 30, 0.25);
   }
 
-  .cl-dock__status {
-    color: #ffffff;
+  .cl-dock .cl-avatars > .cl-dot {
+    border-color: #001e28;
   }
 
   .cl-dock__pill {
     background: #0f3646;
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  }
+
+  /* Phones: the second line may wrap onto two lines, but is never cut off. */
+  .cl-dock__pill .cl-pill__text {
+    max-width: none;
+    min-width: 0;
+    flex: 1;
+    white-space: normal;
   }
 
   .cl-dock__pill:hover {
@@ -565,7 +568,9 @@
   box-sizing: border-box;
   flex-direction: column;
   overflow: hidden;
-  color: var(--cl-ink);
+  background: #ffffff;
+  color: #2f2f2f;
+  box-shadow: 0 16px 40px rgba(20, 0, 40, 0.28);
 }
 
 /* Desktop: 380 x 560 window, anchored bottom-right above the pill */
@@ -575,7 +580,7 @@
   width: 380px;
   height: 560px;
   max-height: calc(100dvh - 140px);
-  border-radius: 20px;
+  border-radius: 12px;
   animation: cl-rise 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
@@ -609,27 +614,66 @@
 .cl-panel__header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  gap: 8px;
+  min-height: 64px;
+  padding: 10px 8px 10px 4px;
+  background: var(--cl-purple);
+  color: #ffffff;
 }
 
-.cl-panel__who {
-  display: flex;
+.cl-panel__tool {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+button.cl-panel__tool:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+span.cl-panel__tool {
+  cursor: default;
+}
+
+.cl-panel__header :focus-visible {
+  outline-color: #ffffff;
+}
+
+.cl-panel__face {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 999px;
+  background: #d9d9d9;
+  color: #8d8d8d;
+}
+
+.cl-panel__face--sm {
+  width: 32px;
+  height: 32px;
+  align-self: flex-end;
+  margin-bottom: 2px;
+}
+
+.cl-panel__title {
   min-width: 0;
   flex: 1;
-  flex-direction: column;
-}
-
-.cl-panel__who strong {
+  overflow: hidden;
   font-family: var(--cl-font-strong);
-  font-size: 17px;
-  font-weight: 600;
-}
-
-.cl-panel__who small {
-  color: var(--cl-ink-soft);
-  font-size: 13px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cl-panel__list {
@@ -637,73 +681,156 @@
   min-height: 0;
   flex: 1;
   flex-direction: column;
-  gap: 10px;
-  padding: 16px;
+  gap: 14px;
+  padding: 18px 16px 12px;
   overflow-y: auto;
+  background: #ffffff;
   overscroll-behavior: contain;
 }
 
-.cl-msg {
-  max-width: 85%;
-  margin: 0;
-  padding: 12px 16px;
-  border-radius: 18px;
+.cl-panel__notice {
+  margin: 0 auto;
+  max-width: 300px;
+  color: #6b6b6b;
   font-family: var(--cl-font);
-  font-size: 15px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
 }
 
-.cl-msg--agent {
-  align-self: flex-start;
-  border-top-left-radius: 6px;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--cl-ink);
+.cl-panel__notice a {
+  color: #4a4a4a;
+  text-underline-offset: 2px;
 }
 
-.cl-msg--customer {
-  align-self: flex-end;
-  border-top-right-radius: 6px;
+.cl-panel__clock {
+  margin: 0;
+  color: #8a8a8a;
+  font-family: var(--cl-font);
+  font-size: 12px;
+  text-align: center;
+}
+
+.cl-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cl-turn--agent {
+  align-items: flex-start;
+}
+
+.cl-turn--customer {
+  align-items: flex-end;
+}
+
+.cl-turn__who {
+  margin: 0 0 0 40px;
+  color: #6b6b6b;
+  font-family: var(--cl-font);
+  font-size: 13px;
+}
+
+.cl-turn__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.cl-turn--customer .cl-turn__row {
+  justify-content: flex-end;
+}
+
+.cl-turn__when {
+  margin: 0 0 0 40px;
+  color: #8a8a8a;
+  font-family: var(--cl-font);
+  font-size: 12px;
+}
+
+.cl-turn--customer .cl-turn__when {
+  margin: 0;
+}
+
+.cl-panel .cl-bubble {
+  max-width: 250px;
+  border-radius: 18px;
+  background: #f1f1f1;
+  color: #2a2a2a;
+  box-shadow: none;
+}
+
+.cl-panel .cl-bubble--mine {
   background: var(--cl-purple);
   color: #ffffff;
 }
 
 .cl-typing {
-  margin: 0;
-  color: var(--cl-ink-soft);
+  margin: 0 0 0 40px;
+  color: #8a8a8a;
+  font-family: var(--cl-font);
   font-size: 13px;
 }
 
 .cl-panel__composer {
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 16px calc(12px + env(safe-area-inset-bottom));
+  background: #ffffff;
+}
+
+.cl-composer {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  gap: 4px;
+  min-height: 48px;
+  padding: 4px 6px 4px 14px;
+  border: 1px solid #d5d5d5;
+  border-radius: 999px;
+  background: #ffffff;
+}
+
+.cl-composer__clip {
+  display: grid;
+  flex: 0 0 auto;
+  color: #3a3a3a;
+  place-items: center;
 }
 
 /* 16px or more stops iOS Safari zooming in when the field is focused */
-.cl-input {
+.cl-panel .cl-input {
   min-width: 0;
-  min-height: 44px;
+  min-height: 40px;
   flex: 1;
-  padding: 10px 16px;
-  border: 1px solid rgba(40, 0, 90, 0.2);
-  border-radius: 999px;
-  background: #ffffff;
-  color: var(--cl-ink);
+  padding: 8px 8px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #2a2a2a;
   font-family: var(--cl-font);
   font-size: 16px;
 }
 
-.cl-input:focus-visible {
-  outline: 3px solid var(--cl-purple);
-  outline-offset: 2px;
+.cl-panel .cl-input::placeholder {
+  color: #9a9a9a;
 }
 
-.cl-send {
+.cl-panel .cl-input:focus-visible {
+  outline: none;
+}
+
+.cl-composer:focus-within {
+  border-color: var(--cl-purple);
+  box-shadow: 0 0 0 3px rgba(113, 0, 241, 0.25);
+}
+
+.cl-panel .cl-send {
   display: grid;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   flex: 0 0 auto;
   place-items: center;
   border: 0;
@@ -713,19 +840,26 @@
   cursor: pointer;
 }
 
-.cl-send:hover:not(:disabled) {
+.cl-panel .cl-send:hover {
   background: var(--cl-purple-deep);
 }
 
-.cl-send:disabled {
-  opacity: 0.5;
-  cursor: default;
+.cl-built {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  color: #8d8d8d;
+  font-family: var(--cl-font);
+  font-size: 12px;
 }
 
 /* ---------- Space for the dock on mobile (set from ChatLauncher) ---------- */
 
+/* ChatLauncher measures the dock and sets --cl-dock-space to its real height. */
 :root.chat-has-dock .landing-page {
-  padding-bottom: calc(140px + env(safe-area-inset-bottom));
+  padding-bottom: var(--cl-dock-space, calc(140px + env(safe-area-inset-bottom)));
 }
 
 :root.chat-has-dock[data-chat-variant="strip"] .landing-page {

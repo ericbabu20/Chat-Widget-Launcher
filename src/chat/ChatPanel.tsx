@@ -1,5 +1,5 @@
 import { type FormEvent, type RefObject, useEffect, useId, useRef, useState } from "react";
-import { AgentAvatars, CloseIcon, SendIcon } from "./ChatParts";
+import { BackIcon, MoreIcon, PaperclipIcon, PersonIcon, PopoutIcon, SendIcon, ZendeskMark } from "./ChatParts";
 import type { Agent, Message } from "./types";
 import { useDialog } from "./useDialog";
 
@@ -25,7 +25,6 @@ type ChatPanelProps = {
 export default function ChatPanel({
   id,
   layout,
-  agents,
   messages,
   isAgentTyping,
   initialTopic,
@@ -34,7 +33,7 @@ export default function ChatPanel({
   onClose,
   returnFocusRef,
 }: ChatPanelProps) {
-  const lead = agents[0];
+  const startedAt = useRef(new Date());
   const containerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -71,59 +70,114 @@ export default function ChatPanel({
   }
 
   const style = layout === "panel" ? { bottom: `calc(100px + env(safe-area-inset-bottom) + ${bottomOffset}px)` } : undefined;
+  const startedLabel = formatStarted(startedAt.current);
 
   return (
     <div
       aria-labelledby={nameId}
       aria-modal="true"
-      className={`cl-glass cl-panel cl-panel--${layout}`}
+      className={`cl-panel cl-panel--${layout}`}
       id={id}
       ref={containerRef}
       role="dialog"
       style={style}
     >
       <header className="cl-panel__header">
-        <AgentAvatars agents={[lead]} size={40} />
-        <div className="cl-panel__who">
-          <strong id={nameId}>{lead.name}</strong>
-          <small>Real person · Outfox team</small>
-        </div>
-        <button aria-label="Close chat" className="cl-icon-btn" onClick={onClose} type="button">
-          <CloseIcon />
+        <button aria-label="Close chat" className="cl-panel__tool" onClick={onClose} type="button">
+          <BackIcon />
         </button>
+        <span aria-hidden="true" className="cl-panel__face">
+          <PersonIcon />
+        </span>
+        <strong className="cl-panel__title" id={nameId}>
+          {startedLabel}
+        </strong>
+        <span aria-hidden="true" className="cl-panel__tool">
+          <PopoutIcon />
+        </span>
+        <span aria-hidden="true" className="cl-panel__tool">
+          <MoreIcon />
+        </span>
       </header>
 
       <div aria-live="polite" aria-relevant="additions" className="cl-panel__list" ref={listRef}>
-        <p className="cl-bubble cl-bubble--agent">
-          Hi, I’m {lead.name}, a real person on the Outfox team. How can I help you today?
+        <p className="cl-panel__notice">
+          This chat is recorded using a cloud service and is subject to the terms of our{" "}
+          <a href="https://www.outfox.energy/" rel="noreferrer" target="_blank">
+            Privacy Notice
+          </a>
+          .
         </p>
+        <p className="cl-panel__clock">{formatClock(startedAt.current)}</p>
+
+        <article className="cl-turn cl-turn--agent">
+          <p className="cl-turn__who">Outfox Energy</p>
+          <div className="cl-turn__row">
+            <span aria-hidden="true" className="cl-panel__face cl-panel__face--sm">
+              <PersonIcon />
+            </span>
+            <p className="cl-bubble">Hey there, how can I help you today?</p>
+          </div>
+          <p className="cl-turn__when">Just now</p>
+        </article>
+
         {messages.map((message) => (
-          <p className={`cl-msg cl-msg--${message.author}`} key={message.id}>
-            {message.text}
-          </p>
+          <article className={`cl-turn cl-turn--${message.author}`} key={message.id}>
+            {message.author === "agent" && <p className="cl-turn__who">Outfox Energy</p>}
+            <div className="cl-turn__row">
+              {message.author === "agent" && (
+                <span aria-hidden="true" className="cl-panel__face cl-panel__face--sm">
+                  <PersonIcon />
+                </span>
+              )}
+              <p className={`cl-bubble ${message.author === "customer" ? "cl-bubble--mine" : ""}`}>{message.text}</p>
+            </div>
+            <p className="cl-turn__when">Just now</p>
+          </article>
         ))}
-        {isAgentTyping && <p className="cl-typing">{lead.name} is typing…</p>}
+        {isAgentTyping && <p className="cl-typing">Outfox Energy is typing…</p>}
       </div>
 
       <form className="cl-panel__composer" onSubmit={handleSubmit}>
-        <label className="cl-sr" htmlFor={inputId}>
-          Type your message
-        </label>
-        <input
-          autoComplete="off"
-          className="cl-input"
-          enterKeyHint="send"
-          id={inputId}
-          onChange={(event) => setDraft(event.target.value)}
-          placeholder="Type your message…"
-          ref={inputRef}
-          type="text"
-          value={draft}
-        />
-        <button aria-label="Send message" className="cl-send" disabled={!draft.trim()} type="submit">
-          <SendIcon />
-        </button>
+        <div className="cl-composer">
+          <span aria-hidden="true" className="cl-composer__clip">
+            <PaperclipIcon />
+          </span>
+          <label className="cl-sr" htmlFor={inputId}>
+            Type a message
+          </label>
+          <input
+            autoComplete="off"
+            className="cl-input"
+            enterKeyHint="send"
+            id={inputId}
+            onChange={(event) => setDraft(event.target.value)}
+            placeholder="Type a message"
+            ref={inputRef}
+            type="text"
+            value={draft}
+          />
+          {draft.trim() && (
+            <button aria-label="Send message" className="cl-send" type="submit">
+              <SendIcon />
+            </button>
+          )}
+        </div>
+        <p className="cl-built">
+          <ZendeskMark /> Built with Zendesk
+        </p>
       </form>
     </div>
   );
+}
+
+function formatStarted(date: Date) {
+  const month = date.toLocaleString("en-GB", { month: "short" });
+  return `Started ${date.getDate()} ${month} at ${formatClock(date)}`;
+}
+
+function formatClock(date: Date) {
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
 }
