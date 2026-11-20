@@ -1,61 +1,37 @@
 import type { RefObject } from "react";
-import { AgentAvatars } from "./ChatParts";
+import { ChatMark, CloseIcon } from "./ChatParts";
 import { getLauncherText, type LauncherCopy } from "./copy";
-import type { Agent } from "./types";
-import { useMediaQuery } from "./useMediaQuery";
 
 type DockBarProps = {
-  agents: Agent[];
-  agentsOnline: boolean;
-  replyTimeMins: number;
-  nextAvailableText: string;
   copy: LauncherCopy;
+  handoffToHuman: boolean;
   controlsId: string;
-  expanded: boolean;
-  /** Compact = the small pill shown after the visitor scrolls past the hero. */
-  compact: boolean;
-  bottomOffset: number;
   buttonRef: RefObject<HTMLButtonElement | null>;
   dockRef: RefObject<HTMLDivElement | null>;
+  minimised: boolean;
   onActivate: () => void;
+  onMinimise: () => void;
 };
 
-/** Mobile and tablet (under 1024px): the bottom dock. Compact mode is the small pill. */
+/** Phone and tablet: the help bar along the bottom, or the round button after it is closed. */
 export function DockBar({
-  agents,
-  agentsOnline,
-  replyTimeMins,
-  nextAvailableText,
   copy,
+  handoffToHuman,
   controlsId,
-  expanded,
-  compact,
-  bottomOffset,
   buttonRef,
   dockRef,
+  minimised,
   onActivate,
+  onMinimise,
 }: DockBarProps) {
-  const narrow = useMediaQuery("(max-width: 359px)");
-  const text = getLauncherText({ copy, agentsOnline, replyTimeMins, nextAvailableText, narrow });
+  const text = getLauncherText({ copy, handoffToHuman });
 
-  if (compact) {
+  if (minimised) {
     return (
-      <div
-        className="cl-dock-compact cl-enter"
-        ref={dockRef}
-        style={{ bottom: `calc(18px + env(safe-area-inset-bottom) + ${bottomOffset}px)` }}
-      >
-        <button
-          aria-controls={controlsId}
-          aria-expanded={expanded}
-          aria-label={text.collapsedLabel}
-          className="cl-glass cl-glass--purple cl-pill cl-pill--mini"
-          onClick={onActivate}
-          ref={buttonRef}
-          type="button"
-        >
-          <AgentAvatars agents={agents} online={agentsOnline} size={34} />
-          <span className="cl-pill__label">Chat</span>
+      <div className="cl-dock cl-dock--fab cl-enter" ref={dockRef}>
+        <button aria-label={text.ariaLabel} className="cl-fab" onClick={onActivate} ref={buttonRef} type="button">
+          <ChatMark size={26} />
+          <span className="cl-live-dot cl-live-dot--fab" />
         </button>
       </div>
     );
@@ -63,23 +39,30 @@ export function DockBar({
 
   return (
     <div className="cl-dock cl-enter" ref={dockRef}>
-      <div className="cl-glass cl-dock__bar">
+      <nav aria-label="Get help" className="cl-helpbar">
         <button
           aria-controls={controlsId}
-          aria-expanded={expanded}
+          aria-expanded={false}
           aria-label={text.ariaLabel}
-          className="cl-glass cl-glass--purple cl-dock__pill"
+          className="cl-helpbar__button"
           onClick={onActivate}
           ref={buttonRef}
           type="button"
         >
-          <AgentAvatars agents={agents} online={agentsOnline} size={36} />
-          <span className="cl-pill__text">
+          <span className="cl-mark cl-mark--dock">
+            <ChatMark size={21} />
+            <span className="cl-live-dot" />
+          </span>
+          <span className="cl-glass-pill__copy">
+            <span className="cl-glass-pill__eyebrow">{text.eyebrow}</span>
             <strong>{text.line1}</strong>
             <small>{text.line2}</small>
           </span>
         </button>
-      </div>
+        <button aria-label="Minimise chat launcher" className="cl-helpbar__close" onClick={onMinimise} type="button">
+          <CloseIcon />
+        </button>
+      </nav>
     </div>
   );
 }

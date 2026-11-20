@@ -2,9 +2,10 @@ import { lazy, Suspense, useEffect, useId, useMemo, useRef, useState } from "rea
 import { OPEN_CHAT_EVENT } from "../openChat";
 import "./chat.css";
 import { ConversationStrip } from "./ConversationStrip";
-import { DEFAULT_NEXT_AVAILABLE_TEXT, type LauncherCopyOverride, resolveLauncherCopy } from "./copy";
+import { type LauncherCopyOverride, promptForPath, resolveLauncherCopy } from "./copy";
 import { DesktopLauncher } from "./DesktopLauncher";
 import { DockBar } from "./DockBar";
+import { HelpMenu } from "./HelpMenu";
 import { PeekCard } from "./PeekCard";
 import type { Agent, LauncherVariant, Message } from "./types";
 import { useCookieConsent } from "./useCookieConsent";
@@ -15,9 +16,31 @@ import { useVisualViewport } from "./useVisualViewport";
 // Loaded only when the chat opens, so the page itself stays light.
 const ChatPanel = lazy(() => import("./ChatPanel"));
 
+// The proactive bubble stays hidden for the rest of the browser session once the visitor closes it.
+const TEASER_KEY = "outfox-chat-teaser-dismissed";
+
+function readTeaserDismissed() {
+  try {
+    return sessionStorage.getItem(TEASER_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function rememberTeaserDismissed() {
+  try {
+    sessionStorage.setItem(TEASER_KEY, "1");
+  } catch {
+    // Storage can be blocked. The bubble simply comes back on the next visit.
+  }
+}
+
 export type ChatLauncherProps = {
+  /** @deprecated The assistant is always available. Only the peek card still reads this. */
   agentsOnline: boolean;
+  /** @deprecated Reply times are no longer shown. Accepted and ignored. */
   replyTimeMins: number;
+  /** @deprecated Avatars are no longer shown. Only the peek and strip variants still read this. */
   agents: Agent[];
   topics: string[];
   /** Mobile and tablet style. Desktop always uses the floating pill. */
@@ -25,21 +48,23 @@ export type ChatLauncherProps = {
   onOpen?: () => void;
   onClose?: () => void;
   onSendMessage: (text: string, topic?: string) => void;
+  /** @deprecated Typing state is only shown inside the open chat window. Accepted and passed through. */
   isAgentTyping: boolean;
   messages: Message[];
   /** When true, the launcher stays hidden until the visitor has consented to cookies. */
   requireConsentBeforeLoad: boolean;
   /** Extra space (px) above the launcher, e.g. for a cookie banner or a sticky button. */
   bottomOffset: number;
-  /** Ends the offline line, e.g. "at 9am tomorrow". Defaults to "as soon as we're back". */
+  /** @deprecated Offline wording has been removed. Accepted and ignored. */
   nextAvailableText?: string;
   /** Optional per-page override of the launcher wording. See copy.ts. */
   copy?: LauncherCopyOverride;
+  /** Turn on only when a real person can take over the Zendesk chat. Default off. */
+  handoffToHuman?: boolean;
 };
 
 export function ChatLauncher({
   agentsOnline,
-  replyTimeMins,
   agents,
   topics,
   variant,
@@ -50,8 +75,9 @@ export function ChatLauncher({
   messages,
   requireConsentBeforeLoad,
   bottomOffset,
-  nextAvailableText = DEFAULT_NEXT_AVAILABLE_TEXT,
+  replyTimeMins = 4,
   copy,
+  handoffToHuman = false,
 }: ChatLauncherProps) {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
@@ -59,13 +85,16 @@ export function ChatLauncher({
   const pastHero = useScrollPastHero();
 
   const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [minimised, setMinimised] = useState(false);
   const [peekDismissed, setPeekDismissed] = useState(false);
-  const [teaserDismissed, setTeaserDismissed] = useState(false);
+  const [teaserDismissed, setTeaserDismissed] = useState(readTeaserDismissed);
   const [pendingTopic, setPendingTopic] = useState<string | undefined>(undefined);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const dockRef = useRef<HTMLDivElement>(null);
   const controlsId = useId();
   const resolvedCopy = useMemo(() => resolveLauncherCopy(copy), [copy]);
+  const prompt = promptForPath(resolvedCopy.prompts, window.location.pathname);
 
   const layout = isDesktop ? "panel" : isTablet ? "sheet" : "fullscreen";
   const hidden = requireConsentBeforeLoad && !consent.consented;
@@ -91,6 +120,10 @@ export function ChatLauncher({
     if (isDesktop || hidden || !dock) return;
     const root = document.documentElement;
     const measure = () => {
+      if (dock.classList.contains("cl-dock--fab")) {
+        root.style.setProperty("--cl-dock-space", "0px");
+        return;
+      }
       const gap = parseFloat(getComputedStyle(dock).bottom) || 0;
       root.style.setProperty("--cl-dock-space", `${Math.ceil(dock.offsetHeight + gap)}px`);
     };
@@ -101,23 +134,33 @@ export function ChatLauncher({
       observer.disconnect();
       root.style.removeProperty("--cl-dock-space");
     };
-  }, [isDesktop, hidden, variant, pastHero, open, offset]);
+  }, [isDesktop, hidden, variant, pastHero, open, offset, minimised]);
 
   // The header chat icon and the desktop Help Centre menu both dispatch this event.
   useEffect(() => {
     function handleOpenRequest() {
-      setPendingTopic(undefined);
-      setOpen(true);
-      onOpen?.();
+      setMinimised(false);
+      setMenuOpen(true);
     }
     window.addEventListener(OPEN_CHAT_EVENT, handleOpenRequest);
     return () => window.removeEventListener(OPEN_CHAT_EVENT, handleOpenRequest);
   }, [onOpen]);
 
   function openChat(topic?: string) {
+    setMenuOpen(false);
     setPendingTopic(topic);
     setOpen(true);
     onOpen?.();
+  }
+
+  function openMenu() {
+    setMinimised(false);
+    setMenuOpen(true);
+  }
+
+  function dismissTeaser() {
+    rememberTeaserDismissed();
+    setTeaserDismissed(true);
   }
 
   function closeChat() {
@@ -129,17 +172,14 @@ export function ChatLauncher({
 
   function renderMobileLauncher() {
     const dockProps = {
-      agents,
-      agentsOnline,
-      replyTimeMins,
-      nextAvailableText,
       copy: resolvedCopy,
+      handoffToHuman,
       controlsId,
-      expanded: open,
-      bottomOffset: offset,
       buttonRef: launcherRef,
       dockRef,
-      onActivate: () => openChat(),
+      minimised,
+      onActivate: openMenu,
+      onMinimise: () => setMinimised(true),
     };
 
     if (variant === "peek") {
@@ -155,7 +195,7 @@ export function ChatLauncher({
           />
         );
       }
-      return <DockBar {...dockProps} compact />;
+      return <DockBar {...dockProps} />;
     }
 
     if (variant === "strip" && !pastHero) {
@@ -169,31 +209,35 @@ export function ChatLauncher({
       );
     }
 
-    return <DockBar {...dockProps} compact={pastHero} />;
+    return <DockBar {...dockProps} />;
   }
 
   if (hidden) return null;
 
   return (
     <div className="cl-root">
-      {isDesktop ? (
-        <DesktopLauncher
-          agents={agents}
-          agentsOnline={agentsOnline}
+      {menuOpen && !open ? (
+        <HelpMenu
           bottomOffset={offset}
-          buttonRef={launcherRef}
-          compact={pastHero && !open}
-          controlsId={controlsId}
-          copy={resolvedCopy}
-          expanded={open}
-          nextAvailableText={nextAvailableText}
-          onActivate={() => (open ? closeChat() : openChat())}
-          onDismissTeaser={() => setTeaserDismissed(true)}
-          replyTimeMins={replyTimeMins}
-          showTeaser={!open && !pastHero && !teaserDismissed}
+          onClose={() => setMenuOpen(false)}
+          onStart={openChat}
+          variant={isDesktop ? "desktop" : "mobile"}
         />
+      ) : isDesktop ? (
+        !open && (
+          <DesktopLauncher
+            bottomOffset={offset}
+            buttonRef={launcherRef}
+            controlsId={controlsId}
+            copy={resolvedCopy}
+            handoffToHuman={handoffToHuman}
+            minimised={minimised}
+            onMinimise={() => setMinimised(true)}
+            onOpen={openMenu}
+          />
+        )
       ) : (
-        renderMobileLauncher()
+        !open && renderMobileLauncher()
       )}
 
       <Suspense fallback={null}>

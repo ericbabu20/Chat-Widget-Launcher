@@ -1,100 +1,90 @@
 /**
- * Every line of text on the launcher (mobile dock, tablet dock and desktop pill).
- * Placeholders: {replyTimeMins} and {nextAvailableText} are filled in at render time.
+ * Every line of text on the launcher: the desktop pill, the mobile/tablet dock and the desktop bubble.
  * Pass a `copy` prop to ChatLauncher to override any of these per page (for A/B tests).
+ *
+ * Only turn on `handoffToHuman` once a real person can take over the Zendesk chat.
  */
 
-export type LauncherLines = {
-  /** Bold first line. */
-  line1: string;
-  /** Smaller second line. */
-  line2: string;
-  /** Full accessible name of the button. */
-  ariaLabel: string;
-};
-
-export type NarrowLines = {
-  line1: string;
-  line2: string;
+export type BubblePrompt = {
+  /** Path pattern. "/tariffs*" matches /tariffs and /tariffs/anything. */
+  match: string;
+  text: string;
 };
 
 export type LauncherCopy = {
-  online: LauncherLines;
-  offline: LauncherLines;
-  /** Used on screens under 360px wide while agents are online. Text wraps, never truncates. */
-  narrow: NarrowLines;
+  /** Small purple line above the title. */
+  eyebrow: string;
+  /** Bold title. */
+  line1: string;
+  /** Smaller second line. */
+  line2: string;
+  /** Second line when handoffToHuman is true. */
+  handoffLine2: string;
+  /** Full accessible name of the launcher button. */
+  ariaLabel: string;
+  /** Accessible name when handoffToHuman is true. */
+  handoffAriaLabel: string;
+  /** Proactive bubble prompts. Pages that match none of these show no bubble. */
+  prompts: BubblePrompt[];
 };
 
-export type LauncherCopyOverride = {
-  online?: Partial<LauncherLines>;
-  offline?: Partial<LauncherLines>;
-  narrow?: Partial<NarrowLines>;
+export type LauncherCopyOverride = Partial<Omit<LauncherCopy, "prompts">> & {
+  prompts?: BubblePrompt[];
 };
-
-export const DEFAULT_NEXT_AVAILABLE_TEXT = "as soon as we're back";
 
 export const defaultLauncherCopy: LauncherCopy = {
-  online: {
-    line1: "Need help? Chat to a real person",
-    line2: "Not a bot. Usually replies in {replyTimeMins} min",
-    ariaLabel: "Need help? Chat to a real person. Not a bot, usually replies in {replyTimeMins} minutes.",
-  },
-  offline: {
-    line1: "Need help? Leave us a message",
-    line2: "A real person will reply {nextAvailableText}",
-    ariaLabel: "Need help? Leave us a message. A real person will reply {nextAvailableText}.",
-  },
-  narrow: {
-    line1: "Need help?",
-    line2: "Chat to a real person, not a bot",
-  },
+  eyebrow: "Fastest way to get help",
+  line1: "Chat with us",
+  line2: "Most issues are resolved in chat",
+  handoffLine2: "Instant answers, with a real person if you need one",
+  ariaLabel: "Fastest way to get help. Chat with us. Most issues are resolved in chat.",
+  handoffAriaLabel: "Need help? Chat with us. Instant answers, with a real person if you need one.",
+  prompts: [
+    { match: "/tariffs*", text: "Questions about our fixed tariffs?" },
+    { match: "/help/*", text: "Can't find what you need? Ask us" },
+    { match: "/moving-home*", text: "Moving home? We can help" },
+  ],
 };
 
 export function resolveLauncherCopy(override?: LauncherCopyOverride): LauncherCopy {
   return {
-    online: { ...defaultLauncherCopy.online, ...override?.online },
-    offline: { ...defaultLauncherCopy.offline, ...override?.offline },
-    narrow: { ...defaultLauncherCopy.narrow, ...override?.narrow },
+    ...defaultLauncherCopy,
+    ...override,
+    prompts: override?.prompts ?? defaultLauncherCopy.prompts,
   };
 }
 
 export type LauncherText = {
+  eyebrow: string;
   line1: string;
   line2: string;
   /** Full sentence read by screen readers. */
   ariaLabel: string;
-  /** Short name used by the icon-only (collapsed) state. */
-  collapsedLabel: string;
 };
 
 export function getLauncherText({
   copy,
-  agentsOnline,
-  replyTimeMins,
-  nextAvailableText,
-  narrow,
+  handoffToHuman,
 }: {
   copy: LauncherCopy;
-  agentsOnline: boolean;
-  replyTimeMins: number;
-  nextAvailableText: string;
-  narrow: boolean;
+  handoffToHuman: boolean;
 }): LauncherText {
-  const values = { replyTimeMins: String(replyTimeMins), nextAvailableText };
-  const lines = agentsOnline ? copy.online : copy.offline;
-  // The short narrow copy only makes sense while online. Offline never shows a reply time.
-  const useNarrow = narrow && agentsOnline;
-
   return {
-    line1: fill(useNarrow ? copy.narrow.line1 : lines.line1, values),
-    line2: fill(useNarrow ? copy.narrow.line2 : lines.line2, values),
-    ariaLabel: fill(lines.ariaLabel, values),
-    collapsedLabel: fill(lines.line1, values),
+    eyebrow: copy.eyebrow,
+    line1: copy.line1,
+    line2: handoffToHuman ? copy.handoffLine2 : copy.line2,
+    ariaLabel: handoffToHuman ? copy.handoffAriaLabel : copy.ariaLabel,
   };
 }
 
-function fill(template: string, values: { replyTimeMins: string; nextAvailableText: string }) {
-  return template
-    .replace(/\{replyTimeMins\}/g, values.replyTimeMins)
-    .replace(/\{nextAvailableText\}/g, values.nextAvailableText);
+/** The bubble text for this page, or null when the page is not in the list. */
+export function promptForPath(prompts: BubblePrompt[], pathname: string): string | null {
+  const hit = prompts.find((prompt) => pathMatches(prompt.match, pathname));
+  return hit ? hit.text : null;
+}
+
+function pathMatches(pattern: string, pathname: string) {
+  const wildcard = pattern.endsWith("*");
+  const base = (wildcard ? pattern.slice(0, -1) : pattern).replace(/\/$/, "") || "/";
+  return wildcard ? pathname === base || pathname.startsWith(`${base}/`) : pathname === pattern;
 }

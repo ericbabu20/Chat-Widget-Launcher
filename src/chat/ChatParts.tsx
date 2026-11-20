@@ -60,6 +60,44 @@ export function ZendeskMark() {
   );
 }
 
+/** White chat bubble used on the purple launcher mark. */
+export function ChatMark({ size = 22 }: { size?: number }) {
+  return (
+    <svg aria-hidden="true" fill="none" height={size} viewBox="0 0 24 24" width={size}>
+      <path
+        d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 20.5l1.6-5A8.5 8.5 0 1 1 21 11.5z"
+        stroke="#ffffff"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
+/** The launcher's 36px purple chat icon. Decorative, so it is hidden from screen readers. */
+export function LauncherIcon() {
+  return (
+    <span aria-hidden="true" className="cl-launch-icon">
+      <svg aria-hidden="true" fill="none" height="22" viewBox="0 0 24 24" width="22">
+        <path
+          d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16H7.5A2.5 2.5 0 0 1 5 13.5z"
+          fill="#7000ff"
+        />
+      </svg>
+    </span>
+  );
+}
+
+/** Small arrow that shows the launcher can be opened. */
+export function ChevronIcon() {
+  return (
+    <svg aria-hidden="true" className="cl-chevron" fill="none" height="18" viewBox="0 0 18 18" width="18">
+      <path d="M7 4.5 11.5 9 7 13.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" />
+    </svg>
+  );
+}
+
 export function CloseIcon() {
   return (
     <svg aria-hidden="true" fill="none" height="22" viewBox="0 0 24 24" width="22">

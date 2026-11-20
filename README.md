@@ -2,7 +2,7 @@
 
 A modern, frosted-glass customer chat launcher for the **Outfox Energy** website, built in React.
 
-It invites visitors to *chat to a real person* without blocking the page underneath. On desktop it is a floating glass pill. On mobile and tablet it becomes a bottom dock designed for real browsers: it handles the toolbar, safe areas and the on-screen keyboard.
+It invites visitors to *chat with us* (the Zendesk AI assistant) without blocking the page underneath. On desktop it is a floating glass pill. On mobile and tablet it becomes a bottom dock designed for real browsers: it handles the toolbar, safe areas and the on-screen keyboard.
 
 > **Status:** 🚧 In development. This is a prototype being A/B tested against the current "Chat with us" button.
 
@@ -35,7 +35,7 @@ The current solid "Chat with us" button covers tariff cards and page content, lo
 
 - **Drive more useful contacts** with page-specific prompts and topic chips
 - **Stay out of the way**: glass surfaces, collapse on scroll, and no covering of CTAs, the footer or the cookie banner
-- **Build trust** with a visible "real person, not a bot" promise, agent avatars and honest reply times
+- **Build trust** with honest wording: "Fastest way to get help: chat with us", with "real person" copy only when `handoffToHuman` is on
 
 ## Features
 
@@ -54,9 +54,9 @@ The current solid "Chat with us" button covers tariff cards and page content, lo
 
 | Breakpoint | State | Description |
 |---|---|---|
-| Desktop ≥1024px | Floating pill | Glass pill bottom-right with avatars, an online dot and "Chat to a real person". Collapses to an icon past the hero. |
+| Desktop ≥1024px | Floating pill | Dark card bottom-right, same colours as the mobile dock, with a purple chat icon and "Fastest way to get help: chat with us". Shows a page prompt bubble (dismissable for the session). Collapses to an icon past the hero. |
 | Desktop ≥1024px | Chat panel | Anchored glass panel with agent header, messages, typing indicator and composer. |
-| Mobile/tablet | **W1 – Dock** | Full-width glass bar above the browser toolbar. Status row plus "Chat to a real person" button. |
+| Mobile/tablet | **W1 – Dock** | Dark bar along the bottom on phones. On tablet, the same dark card as desktop, bottom-right. |
 | Mobile/tablet | **W2 – Peek card** | Bottom sheet with a greeting from a named agent and a "Start chat" button. |
 | Mobile/tablet | **W3 – Conversation strip** | Agent bubble, topic chips and a fake input. Tapping it opens W4. |
 | Mobile/tablet | **W4 – Full-screen chat** | Real chat. Composer sits above the keyboard and the input is ≥16px so iOS doesn't zoom. |
@@ -129,13 +129,17 @@ export default function Layout({ children }) {
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `provider` | `ChatProvider` | `MockChatProvider` | Chat transport adapter |
-| `agentsOnline` | `boolean` | `false` | Shows the online state. When `false`, the launcher falls back to the offline/contact form state. |
-| `replyTimeMins` | `number` | — | Typical reply time shown to users. Keep it honest. |
-| `agents` | `{ name: string; avatarUrl: string }[]` | `[]` | Agents shown in the avatar stack and header |
+| `handoffToHuman` | `boolean` | `false` | Turn on only when a real person can take over the chat. Switches the second line to "with a real person if you need one". |
+| `copy` | `LauncherCopyOverride` | see `src/chat/copy.ts` | Override the launcher wording and the per-page bubble prompts |
+| `agentsOnline` | `boolean` | `false` | **Deprecated.** Accepted and ignored by the launcher. Only the peek and strip variants still read it. |
+| `replyTimeMins` | `number` | — | **Deprecated.** Accepted and ignored. Reply times are no longer shown. |
+| `agents` | `{ name: string; avatarUrl: string }[]` | `[]` | **Deprecated.** Avatars are no longer shown on the launcher. Only the peek and strip variants still read it. |
 | `topics` | `string[]` | `[]` | Topic chips for the W3 strip and empty chat state |
 | `variant` | `'dock' \| 'peek' \| 'strip'` | `'dock'` | Mobile/tablet launcher variant, for A/B testing |
 | `messages` | `Message[]` | `[]` | Controlled message list (optional) |
-| `isAgentTyping` | `boolean` | `false` | Shows the typing line. Only set it from real provider events. |
+| `isAgentTyping` | `boolean` | `false` | **Deprecated** for the launcher. Typing state only shows inside the open chat window. Only set it from real provider events. |
+
+> Launcher links to the Zendesk AI assistant. Don't use "real person" or "not a bot" copy unless `handoffToHuman` is enabled and human handover is live.
 | `requireConsentBeforeLoad` | `boolean` | `false` | Hides the launcher until cookie consent is given |
 | `bottomOffset` | `number` | `0` | Extra px to keep clear of other fixed UI |
 | `hideOnPaths` | `string[]` | `['/checkout', '/sign-up/confirm']` | Routes where the launcher is suppressed |

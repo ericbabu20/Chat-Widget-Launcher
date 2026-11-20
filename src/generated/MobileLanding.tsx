@@ -1,4 +1,5 @@
-import { openSupportChat } from "../openChat";
+import { HeroLights } from "../HeroLights";
+import { HeroSnow } from "../HeroSnow";
 
 const assetPathPrefix = "/assets";
 const imgRectangle20735 = `${assetPathPrefix}/a99e7.png`;
@@ -778,8 +779,10 @@ export default function LandingPageXMasEdition() {
       </div>
       <div className="absolute h-[781px] left-[-14px] top-[-26px] w-[451px]" data-node-id="9:9365">
         <div className="absolute h-[781px] left-[5px] top-0 w-[440px]" data-node-id="9:9364">
-          <div className="absolute h-[781px] left-0 top-0 w-[440px]" data-node-id="9:9361" data-name="Tiny fox in a snowy Christmas scene-2 1">
+          <div className="absolute h-[781px] left-0 top-0 w-[440px] overflow-hidden" data-node-id="9:9361" data-name="Tiny fox in a snowy Christmas scene-2 1">
             <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgTinyFoxInASnowyChristmasScene21} />
+            <HeroLights variant="mobile" />
+            <HeroSnow />
           </div>
         </div>
         <div className="absolute h-[329.323px] left-[36px] top-[199px] w-[379px]" data-node-id="9:9366">
@@ -819,17 +822,6 @@ export default function LandingPageXMasEdition() {
           <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgOutfoxEnergySecondaryLogo2ColRgb2} />
         </div>
         <div className="flex items-center gap-[12px]">
-          <button aria-label="Chat with us" className="mobile-header-chat" onClick={openSupportChat} type="button">
-            <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
-              <path
-                d="M7.2 6.8h9.6c1.1 0 2 .9 2 2v5.2c0 1.1-.9 2-2 2h-4.2L9.2 19.2v-3.2H7.2c-1.1 0-2-.9-2-2V8.8c0-1.1.9-2 2-2Z"
-                stroke="currentColor"
-                strokeLinejoin="round"
-                strokeWidth="1.7"
-              />
-            </svg>
-            <span className="mobile-header-chat__dot" />
-          </button>
           <div className="relative shrink-0 size-[24px]" data-node-id="9:8540" data-name="Menu">
             <img alt="Menu" className="absolute block inset-0 max-w-none size-full" src={imgMenu} />
           </div>

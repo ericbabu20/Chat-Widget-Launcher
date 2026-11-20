@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { HeroLights } from "../HeroLights";
+import { HeroSnow } from "../HeroSnow";
 import { openSupportChat } from "../openChat";
 
 const assetPathPrefix = "/assets";
@@ -1027,8 +1029,10 @@ export default function Option5() {
           </div>
         </div>
       </div>
-      <div className="absolute h-[811px] left-0 top-[-3px] w-[1440px]" data-node-id="9:9362" data-name="Small Fox in a Snowy Christmas Scene-1 1">
+      <div className="absolute h-[811px] left-0 top-[-3px] w-[1440px] overflow-hidden" data-node-id="9:9362" data-name="Small Fox in a Snowy Christmas Scene-1 1">
         <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgSmallFoxInASnowyChristmasScene11} />
+        <HeroLights variant="desktop" />
+        <HeroSnow />
       </div>
       <div className="absolute h-[136px] left-[595px] top-[148px] w-[234px]" data-node-id="9:8714" data-name="outfox-energy-primary-logo-2col-rgb 2">
         <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgOutfoxEnergyPrimaryLogo2ColRgb2} />
