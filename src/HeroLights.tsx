@@ -5,21 +5,18 @@ type Bulb = { x: number; y: number; star?: boolean };
 // Positions are percentages of the hero picture. They come from the yellow
 // bulbs in the artwork, not the fox, so the glow sits on the tree lights.
 const DESKTOP_BULBS: Bulb[] = [
-  { x: 94.4, y: 8.4, star: true },
-  { x: 95.9, y: 22.0 },
-  { x: 93.5, y: 27.3 },
-  { x: 94.9, y: 38.0 },
-  { x: 98.3, y: 40.8 },
-  { x: 96.1, y: 43.8 },
-  { x: 93.8, y: 44.8 },
-  { x: 91.9, y: 45.0 },
-  { x: 90.1, y: 53.5 },
-  { x: 92.6, y: 55.2 },
-  { x: 96.0, y: 57.1 },
-  { x: 93.4, y: 60.1 },
-  { x: 90.5, y: 72.4 },
-  { x: 98.6, y: 73.1 },
-  { x: 94.2, y: 74.1 },
+  { x: 94.3, y: 23.0, star: true },
+  { x: 93.9, y: 37.0 },
+  { x: 98.4, y: 47.3 },
+  { x: 96.4, y: 49.6 },
+  { x: 91.5, y: 50.9 },
+  { x: 93.6, y: 51.0 },
+  { x: 90.1, y: 57.7 },
+  { x: 95.9, y: 60.3 },
+  { x: 93.6, y: 62.7 },
+  { x: 90.0, y: 72.7 },
+  { x: 98.8, y: 73.5 },
+  { x: 93.9, y: 74.7 },
 ];
 
 const MOBILE_BULBS: Bulb[] = [

@@ -1,5 +1,67 @@
 @import "tailwindcss";
 
+/* Mundial is the Outfox brand typeface (brand guidelines p.12): Demi Bold for headlines, Regular for body copy.
+   Registered here as one family with four weights, so Tailwind's font weights pick the right file. */
+@font-face {
+  font-family: "Mundial";
+  src: url("/fonts/Mundial-Light.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Mundial";
+  src: url("/fonts/Mundial-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Mundial";
+  src: url("/fonts/Mundial-Demibold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Mundial";
+  src: url("/fonts/Mundial-Bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Mundial", Arial, ui-sans-serif, system-ui, sans-serif;
+
+  /* Outfox brand colours (brand guidelines p.15). */
+  --color-ink: #001e28; /* Outfox Black */
+  --color-ink-soft: #1a353e;
+  --color-brand: #7100f1; /* Outfox Purple */
+  --color-brand-dark: #5b00c4;
+  --color-canvas: #f5f5f5;
+  --color-success: #1c7c54;
+  --color-danger: #c20114;
+
+  /* The headline weight is Demi Bold (600), so "font-medium" maps to it, as in the design brief. */
+  --font-weight-medium: 600;
+
+  --animate-marquee: marquee 30s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
 @font-face {
   font-family: "Mundial:Bold";
   src: url("/fonts/Mundial-Bold.woff2") format("woff2");
@@ -45,6 +107,9 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* When a field or button is tabbed to or scrolled into view, keep it clear of the chat bar on phones.
+       The launcher measures its own height into --cl-dock-space. */
+    scroll-padding-bottom: calc(var(--cl-dock-space, 0px) + 1rem);
   }
 
   body {
@@ -978,4 +1043,149 @@
 
 .help-menu__icon .mobile-header-chat__dot {
   border-color: #7100f1;
+}
+
+/* ---------- Home page polish (Apple-style feel) ----------
+   None of this moves or restyles anything from the Figma design. It only adds feedback and motion. */
+
+:root {
+  /* A calm ease-out with no bounce, so things settle softly. */
+  --home-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 1. Press feedback is instant. Buttons and links dip the moment they are pressed, not when released.
+      The `scale` property is separate from Tailwind's `translate`, so centred items stay centred. */
+.landing-canvas :is(button, a[href]):not(.bz-menu__button, .bz-menu__link) {
+  transition:
+    scale 100ms ease-out,
+    background-color 140ms ease;
+}
+
+.landing-canvas :is(button, a[href]):not(.bz-menu__button, .bz-menu__link):active {
+  scale: 0.97;
+}
+
+/* 2. The hero arrives in order: logo, award, tagline, postcode box, rating. Plays once on load. */
+@keyframes home-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes home-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.hero-reveal {
+  animation: home-rise 650ms var(--home-ease) both;
+}
+
+.hero-reveal--1 {
+  animation-delay: 80ms;
+}
+
+.hero-reveal--2 {
+  animation-delay: 150ms;
+}
+
+.hero-reveal--3 {
+  animation-delay: 220ms;
+}
+
+.hero-reveal--4 {
+  animation-delay: 290ms;
+}
+
+.hero-reveal--5 {
+  animation-delay: 360ms;
+}
+
+/* 3. The Help Centre menu grows out of its button and goes back into it, and can be reversed mid-way. */
+.help-menu {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-6px) scale(0.96);
+  transform-origin: 50% 0;
+  transition:
+    opacity 140ms ease,
+    transform 220ms var(--home-ease),
+    visibility 0s linear 220ms;
+}
+
+.help-menu[data-open="true"] {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0) scale(1);
+  transition:
+    opacity 140ms ease,
+    transform 220ms var(--home-ease),
+    visibility 0s;
+}
+
+/* 4. Reduced motion: keep gentle fades, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .landing-canvas :is(button, a[href]):not(.bz-menu__button, .bz-menu__link):active {
+    scale: 1;
+  }
+
+  .hero-reveal {
+    animation: home-fade 200ms ease both;
+    animation-delay: 0ms;
+  }
+
+  .help-menu,
+  .help-menu[data-open="true"] {
+    transform: translateX(-50%);
+  }
+
+  .help-menu {
+    transition:
+      opacity 120ms ease,
+      visibility 0s linear 120ms;
+  }
+
+  .help-menu[data-open="true"] {
+    transition:
+      opacity 120ms ease,
+      visibility 0s;
+  }
+}
+/* Content rises gently into place as it scrolls into view. Only where the browser supports it,
+   and never for people who have asked their device to reduce motion. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .rise {
+      animation: rise linear both;
+      animation-range: entry 0% entry 35%;
+      animation-timeline: view();
+    }
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
 }

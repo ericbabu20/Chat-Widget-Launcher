@@ -1,8 +1,3 @@
-import { useEffect, useRef, useState } from "react";
-import { HeroLights } from "../HeroLights";
-import { HeroSnow } from "../HeroSnow";
-import { openSupportChat } from "../openChat";
-
 const assetPathPrefix = "/assets";
 const imgWarmHome = `${assetPathPrefix}/0dc8c.png`;
 const imgMain = `${assetPathPrefix}/e9911.png`;
@@ -14,7 +9,6 @@ const imgHomeEnergySwitchIconRemovebgPreview = `${assetPathPrefix}/84f8f.png`;
 const imgMarkOfTrustUkasRemovebgPreview = `${assetPathPrefix}/864e1.png`;
 const imgOutfoxEnergyFox1348138356222Converted2 = `${assetPathPrefix}/2bc7a.png`;
 const imgRectangle20735 = `${assetPathPrefix}/d6913.png`;
-const imgSmallFoxInASnowyChristmasScene11 = `${assetPathPrefix}/554b5.png`;
 const imgEllipse4 = `${assetPathPrefix}/a9dd4.svg`;
 const imgArrowRightAlt = `${assetPathPrefix}/c93b2.svg`;
 const imgStar = `${assetPathPrefix}/8793d.svg`;
@@ -60,35 +54,8 @@ const imgGroup6 = `${assetPathPrefix}/29c82.svg`;
 const imgGroup7 = `${assetPathPrefix}/dbfc0.svg`;
 const imgGroup1000003023 = `${assetPathPrefix}/c636b.svg`;
 const imgGroup1000003028 = `${assetPathPrefix}/0322f.svg`;
-const imgOutfoxEnergyPrimaryLogo2ColRgb2 = `${assetPathPrefix}/95087.svg`;
-const imgGroup33383 = `${assetPathPrefix}/69c56.svg`;
-const imgOutfoxEnergySecondaryLogo2ColRgb2 = `${assetPathPrefix}/58d14.svg`;
-const imgArrowForwardIos = `${assetPathPrefix}/67fba.svg`;
-const imgArrowForwardIos1 = `${assetPathPrefix}/e88be.svg`;
-
+/** Everything on the home page below the hero. The hero and header are in src/home/Hero.tsx. */
 export default function Option5() {
-  const [helpMenuOpen, setHelpMenuOpen] = useState(false);
-  const helpMenuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!helpMenuOpen) return;
-
-    function closeOnOutsideClick(event: MouseEvent) {
-      if (!helpMenuRef.current?.contains(event.target as Node)) setHelpMenuOpen(false);
-    }
-
-    function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") setHelpMenuOpen(false);
-    }
-
-    document.addEventListener("click", closeOnOutsideClick);
-    document.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.removeEventListener("click", closeOnOutsideClick);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [helpMenuOpen]);
-
   return (
     <div className="bg-white relative size-full" data-node-id="9:8542" data-name="Option 5">
       <div className="absolute left-[-413px] size-[934px] top-[1969px]" data-node-id="9:8543">
@@ -1024,164 +991,6 @@ export default function Option5() {
                 <p className="[word-break:break-word] font-['Mundial:Light'] leading-[normal] not-italic relative shrink-0 text-[18px] text-white w-[349px]" data-node-id="9:9251">
                   Say goodbye to robotic replies. Our UK-based support team is friendly, fast, and always ready to help when you need us most.
                 </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="absolute h-[811px] left-0 top-[-3px] w-[1440px] overflow-hidden" data-node-id="9:9362" data-name="Small Fox in a Snowy Christmas Scene-1 1">
-        <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgSmallFoxInASnowyChristmasScene11} />
-        <HeroLights variant="desktop" />
-        <HeroSnow />
-      </div>
-      <div className="absolute h-[136px] left-[595px] top-[148px] w-[234px]" data-node-id="9:8714" data-name="outfox-energy-primary-logo-2col-rgb 2">
-        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgOutfoxEnergyPrimaryLogo2ColRgb2} />
-      </div>
-      <p className="[word-break:break-word] absolute font-['Mundial:Demibold'] leading-[normal] left-[75px] not-italic text-[46px] text-[color:var(--black-900,#1a353e)] top-[380px] w-[642px]" data-node-id="9:8727">{`The UK's Cheapest Fixed Tariff`}</p>
-      <p className="[word-break:break-word] absolute font-['Mundial:Regular'] leading-[normal] left-[81px] not-italic text-[32px] text-[color:var(--black-900,#1a353e)] top-[456px] whitespace-nowrap" data-node-id="9:8728">
-        Pay Less For Your Energy
-      </p>
-      <div className="absolute content-stretch flex flex-col items-start left-[70px] top-[504px]" data-node-id="9:8729">
-        <div className="bg-[var(--white,white)] content-stretch flex flex-col h-[80px] items-end justify-center pl-[32px] pr-[11px] py-[7px] relative rounded-[500px] shrink-0 w-[448px]" data-node-id="9:8730">
-          <div className="content-stretch flex gap-[68px] items-center relative shrink-0" data-node-id="9:8731">
-            <p className="[word-break:break-word] font-['Mundial:Regular'] leading-[normal] not-italic relative shrink-0 text-[24px] text-[color:var(--helping-text,#666)] whitespace-nowrap" data-node-id="9:8732">
-              Your Postcode
-            </p>
-            <div className="bg-[#7100f1] content-stretch flex items-center justify-center px-[24px] py-[19px] relative rounded-[60px] shrink-0" data-node-id="9:8733">
-              <p className="[word-break:break-word] font-['Mundial:Regular'] leading-[normal] not-italic relative shrink-0 text-[24px] text-[color:var(--purple-50,#f5edff)] whitespace-nowrap" data-node-id="9:8734">
-                Get A Quote
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="absolute content-stretch flex gap-[16px] items-end left-[84px] top-[600px]" data-node-id="9:8735">
-        <div className="[word-break:break-word] flex flex-col font-['Mundial:Regular'] justify-end leading-[0] not-italic relative shrink-0 text-[18px] text-[color:var(--black-900,#1a353e)] whitespace-nowrap" data-node-id="9:8736">
-          <p className="leading-[normal]">Excellent 4.3 out of 5</p>
-        </div>
-        <div className="h-[27.001px] relative shrink-0 w-[108.022px]" data-node-id="9:8737">
-          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroup33383} />
-        </div>
-      </div>
-      <div className="-translate-x-1/2 absolute z-30 h-[80px] left-[calc(50%+12px)] top-[44px] w-[1320px]" data-node-id="9:9252" data-name="Component 48">
-        <div className="-translate-x-1/2 absolute bg-[var(--purple-1000,#7100f1)] content-stretch drop-shadow-[0px_4px_8px_rgba(113,0,241,0.3)] flex flex-col h-[60px] items-start justify-center left-1/2 px-[31px] py-[17px] rounded-[38.85px] top-0 w-[1320px]" data-node-id="I9:9252;1299:1178">
-          <div className="content-stretch flex items-center justify-between relative shrink-0 w-[1253px]" data-node-id="I9:9252;1299:1179">
-            <div className="h-[29.241px] relative shrink-0 w-[165px]" data-node-id="I9:9252;1299:1180" data-name="outfox-energy-secondary-logo-2col-rgb 1">
-              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgOutfoxEnergySecondaryLogo2ColRgb2} />
-            </div>
-            <div className="content-stretch cursor-pointer flex gap-[32px] items-center relative shrink-0" data-node-id="I9:9252;1299:1193">
-              <button className="content-stretch flex gap-[10px] items-center justify-center p-[10px] relative shrink-0" data-node-id="I9:9252;1299:1194">
-                <p className="[word-break:break-word] font-['Mundial:Regular'] leading-[normal] not-italic relative shrink-0 text-[16px] text-left text-white whitespace-nowrap" data-node-id="I9:9252;1299:1195">
-                  About Us
-                </p>
-                <div className="flex h-[8px] items-center justify-center relative shrink-0 w-[13.588px]" data-node-id="I9:9252;1299:1196">
-                  <div className="flex-none rotate-90">
-                    <div className="h-[13.588px] relative w-[8px]" data-name="arrow_forward_ios">
-                      <div className="absolute inset-[2.6%_5.18%_2.6%_4.42%]">
-                        <img alt="" className="block max-w-none size-full" src={imgArrowForwardIos} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </button>
-              <button className="content-stretch flex gap-[8px] items-center justify-center p-[10px] relative shrink-0" data-node-id="I9:9252;1299:1197">
-                <p className="[word-break:break-word] font-['Mundial:Regular'] leading-[normal] not-italic relative shrink-0 text-[16px] text-left text-white whitespace-nowrap" data-node-id="I9:9252;1299:1198">
-                  Account
-                </p>
-                <div className="flex h-[8px] items-center justify-center relative shrink-0 w-[13.588px]" data-node-id="I9:9252;1299:1199">
-                  <div className="flex-none rotate-90">
-                    <div className="h-[13.588px] relative w-[8px]" data-name="arrow_forward_ios">
-                      <div className="absolute inset-[2.6%_5.18%_2.6%_4.42%]">
-                        <img alt="" className="block max-w-none size-full" src={imgArrowForwardIos1} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </button>
-              <button className="content-stretch flex gap-[8px] items-center justify-center p-[10px] relative shrink-0" data-node-id="I9:9252;1299:1200">
-                <p className="[word-break:break-word] font-['Mundial:Regular'] leading-[normal] not-italic relative shrink-0 text-[16px] text-left text-white whitespace-nowrap" data-node-id="I9:9252;1299:1201">
-                  Tariffs
-                </p>
-                <div className="flex h-[8px] items-center justify-center relative shrink-0 w-[13.588px]" data-node-id="I9:9252;1299:1202">
-                  <div className="flex-none rotate-90">
-                    <div className="h-[13.588px] relative w-[8px]" data-name="arrow_forward_ios">
-                      <div className="absolute inset-[2.6%_5.18%_2.6%_4.42%]">
-                        <img alt="" className="block max-w-none size-full" src={imgArrowForwardIos} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </button>
-              <div className="relative shrink-0" ref={helpMenuRef}>
-                <button
-                  aria-expanded={helpMenuOpen}
-                  aria-haspopup="menu"
-                  className="content-stretch flex gap-[8px] items-center justify-center p-[10px] relative shrink-0"
-                  data-node-id="I9:9252;1299:1203"
-                  onClick={() => setHelpMenuOpen((open) => !open)}
-                  type="button"
-                >
-                  <p className="[word-break:break-word] font-['Mundial:Regular'] leading-[normal] not-italic relative shrink-0 text-[16px] text-left text-white whitespace-nowrap" data-node-id="I9:9252;1299:1204">
-                    Help Centre
-                  </p>
-                  <div
-                    className={`flex h-[8px] items-center justify-center relative shrink-0 w-[13.588px] transition-transform ${helpMenuOpen ? "rotate-180" : ""}`}
-                    data-node-id="I9:9252;1299:1205"
-                  >
-                    <div className="flex-none rotate-90">
-                      <div className="h-[13.588px] relative w-[8px]" data-name="arrow_forward_ios">
-                        <div className="absolute inset-[2.6%_5.18%_2.6%_4.42%]">
-                          <img alt="" className="block max-w-none size-full" src={imgArrowForwardIos} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </button>
-                {helpMenuOpen && (
-                  <div className="help-menu" role="menu">
-                    <button
-                      className="help-menu__item"
-                      onClick={() => {
-                        setHelpMenuOpen(false);
-                        openSupportChat();
-                      }}
-                      role="menuitem"
-                      type="button"
-                    >
-                      <span className="help-menu__icon" aria-hidden="true">
-                        <svg fill="none" viewBox="0 0 24 24">
-                          <path
-                            d="M7.2 6.8h9.6c1.1 0 2 .9 2 2v5.2c0 1.1-.9 2-2 2h-4.2L9.2 19.2v-3.2H7.2c-1.1 0-2-.9-2-2V8.8c0-1.1.9-2 2-2Z"
-                            stroke="currentColor"
-                            strokeLinejoin="round"
-                            strokeWidth="1.7"
-                          />
-                        </svg>
-                        <span className="mobile-header-chat__dot" />
-                      </span>
-                      <span>
-                        <strong>Chat with us</strong>
-                        <small>We’re online and ready to help</small>
-                      </span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="content-stretch flex items-center relative shrink-0" data-node-id="I9:9252;1299:1206">
-              <div className="content-stretch flex gap-[14px] items-center relative shrink-0" data-node-id="I9:9252;1299:1207">
-                <div className="border border-solid border-white content-stretch flex h-[38px] items-center justify-center px-[18px] py-[15px] relative rounded-[23px] shrink-0 w-[109px]" data-node-id="I9:9252;1299:1208">
-                  <p className="[word-break:break-word] font-['Mundial:Demibold'] leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap" data-node-id="I9:9252;1299:1209">
-                    Quote Me
-                  </p>
-                </div>
-                <div className="content-stretch flex h-[38px] items-center relative shrink-0 w-[109px]" data-node-id="I9:9252;1299:1210">
-                  <div className="bg-white content-stretch flex h-[38px] items-center justify-center px-[18px] py-[15px] relative rounded-[23px] shrink-0 w-[109px]" data-node-id="I9:9252;1299:1211">
-                    <p className="[word-break:break-word] font-['Mundial:Demibold'] leading-[normal] not-italic relative shrink-0 text-[16px] text-[color:var(--black-1000,#001e28)] whitespace-nowrap" data-node-id="I9:9252;1299:1212">
-                      Sign In
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

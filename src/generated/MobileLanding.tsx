@@ -1,6 +1,3 @@
-import { HeroLights } from "../HeroLights";
-import { HeroSnow } from "../HeroSnow";
-
 const assetPathPrefix = "/assets";
 const imgRectangle20735 = `${assetPathPrefix}/a99e7.png`;
 const imgMain = `${assetPathPrefix}/e9911.png`;
@@ -14,7 +11,6 @@ const imgOutfoxFoxHeadphone3 = `${assetPathPrefix}/4a3f9.png`;
 const imgImage61 = `${assetPathPrefix}/bc973.png`;
 const imgImage59 = `${assetPathPrefix}/c7ec6.png`;
 const imgWarmHome = `${assetPathPrefix}/0dc8c.png`;
-const imgTinyFoxInASnowyChristmasScene21 = `${assetPathPrefix}/9793d.png`;
 const imgEllipse4 = `${assetPathPrefix}/46c5b.svg`;
 const imgOutfoxEnergySecondaryLogo2ColRgb1 = `${assetPathPrefix}/bcfd4.svg`;
 const imgLinkedIn = `${assetPathPrefix}/3ceaf.svg`;
@@ -54,10 +50,6 @@ const imgGroup1000003089 = `${assetPathPrefix}/daaa7.svg`;
 const imgEllipse11 = `${assetPathPrefix}/7c2c3.svg`;
 const imgFrame1597882239 = `${assetPathPrefix}/8194e.svg`;
 const imgGroup1000003093 = `${assetPathPrefix}/1b729.svg`;
-const imgGroup33383 = `${assetPathPrefix}/657b3.svg`;
-const imgOutfoxEnergyPrimaryLogo2ColRgb2 = `${assetPathPrefix}/8b683.svg`;
-const imgOutfoxEnergySecondaryLogo2ColRgb2 = `${assetPathPrefix}/53285.svg`;
-const imgMenu = `${assetPathPrefix}/73a98.svg`;
 
 export default function LandingPageXMasEdition() {
   return (
@@ -776,56 +768,6 @@ export default function LandingPageXMasEdition() {
       </div>
       <div className="absolute inset-[5.88%_-21.82%_93.06%_-4.09%]" data-node-id="9:8523">
         <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroup1000003093} />
-      </div>
-      <div className="absolute h-[781px] left-[-14px] top-[-26px] w-[451px]" data-node-id="9:9365">
-        <div className="absolute h-[781px] left-[5px] top-0 w-[440px]" data-node-id="9:9364">
-          <div className="absolute h-[781px] left-0 top-0 w-[440px] overflow-hidden" data-node-id="9:9361" data-name="Tiny fox in a snowy Christmas scene-2 1">
-            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgTinyFoxInASnowyChristmasScene21} />
-            <HeroLights variant="mobile" />
-            <HeroSnow />
-          </div>
-        </div>
-        <div className="absolute h-[329.323px] left-[36px] top-[199px] w-[379px]" data-node-id="9:9366">
-          <div className="absolute content-stretch flex gap-[10.265px] items-end left-[80px] top-[312px]" data-node-id="9:8080">
-            <div className="[word-break:break-word] flex flex-col font-['Mundial:Regular'] justify-end leading-[0] not-italic relative shrink-0 text-[11.549px] text-[color:var(--black-900,#1a353e)] whitespace-nowrap" data-node-id="9:8081">
-              <p className="leading-[normal]">Excellent 4.3 out of 5</p>
-            </div>
-            <div className="h-[17.323px] relative shrink-0 w-[69.306px]" data-node-id="9:8082">
-              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroup33383} />
-            </div>
-          </div>
-          <div className="-translate-x-1/2 absolute bg-[var(--b\&w\/white,white)] content-stretch flex flex-col h-[74px] items-end justify-center left-1/2 pl-[32px] pr-[11px] py-[7px] rounded-[500px] top-[211px]" data-node-id="9:8075">
-            <div className="content-stretch flex gap-[68px] items-center relative shrink-0" data-node-id="9:8076">
-              <p className="[word-break:break-word] font-['Mundial:Regular'] leading-[normal] not-italic relative shrink-0 text-[18px] text-[color:var(--helping-text,#666)] whitespace-nowrap" data-node-id="9:8077">
-                Your Postcode
-              </p>
-              <div className="bg-[#7100f1] content-stretch flex items-center justify-center px-[24px] py-[19px] relative rounded-[60px] shrink-0" data-node-id="9:8078">
-                <p className="[word-break:break-word] font-['Mundial:Regular'] leading-[normal] not-italic relative shrink-0 text-[18px] text-[color:var(--purple-50,#f5edff)] whitespace-nowrap" data-node-id="9:8079">
-                  Get A Quote
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="-translate-x-1/2 [word-break:break-word] absolute content-stretch flex flex-col gap-[16px] items-center leading-[normal] left-[calc(50%-16px)] not-italic text-[color:var(--black-900,#1a353e)] top-[126px] w-[335px]" data-node-id="9:8086">
-            <p className="font-['Mundial:Demibold'] relative shrink-0 text-[24px] w-full" data-node-id="9:8087">{`The UK's Cheapest Fixed Tariff`}</p>
-            <p className="font-['Mundial:Regular'] relative shrink-0 text-[18px] text-center w-full" data-node-id="9:8088">
-              Pay Less For Your Energy
-            </p>
-          </div>
-          <div className="-translate-x-1/2 absolute h-[99px] left-[calc(50%+0.5px)] top-0 w-[170px]" data-node-id="9:8089" data-name="outfox-energy-primary-logo-2col-rgb 2">
-            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgOutfoxEnergyPrimaryLogo2ColRgb2} />
-          </div>
-        </div>
-      </div>
-      <div className="absolute bg-[var(--purple-1000,#7100f1)] content-stretch drop-shadow-[0px_4px_2px_rgba(202,202,202,0.15)] flex items-center justify-between left-0 px-[16px] py-[16px] top-0 w-[440px]" data-node-id="9:8526">
-        <div className="h-[24px] relative shrink-0 w-[133px]" data-node-id="9:8527" data-name="outfox-energy-secondary-logo-2col-rgb 1">
-          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgOutfoxEnergySecondaryLogo2ColRgb2} />
-        </div>
-        <div className="flex items-center gap-[12px]">
-          <div className="relative shrink-0 size-[24px]" data-node-id="9:8540" data-name="Menu">
-            <img alt="Menu" className="absolute block inset-0 max-w-none size-full" src={imgMenu} />
-          </div>
-        </div>
       </div>
     </div>
   );

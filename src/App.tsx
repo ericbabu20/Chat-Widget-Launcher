@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
-import DesktopLanding from "./generated/DesktopLanding";
-import MobileLanding from "./generated/MobileLanding";
+import { useEffect } from "react";
+import { BusinessEnergyIntro } from "./business/BusinessEnergyIntro";
+import { BusinessEnergyRegister } from "./business/BusinessEnergyRegister";
+import { HomePage } from "./home/HomePage";
+import { ROUTES, usePathname } from "./router";
 import { ChatLauncher } from "./chat/ChatLauncher";
 import { createMockChatProvider } from "./chat/mockChatProvider";
 import { useChatSession } from "./chat/useChatSession";
 import type { Agent, LauncherVariant } from "./chat/types";
-
-const DESKTOP_WIDTH = 1440;
-const DESKTOP_HEIGHT = 7556;
-const MOBILE_WIDTH = 440;
-const MOBILE_HEIGHT = 8209;
 
 const CHAT_AGENTS: Agent[] = [
   { name: "Alex", avatarUrl: "" },
@@ -20,41 +17,6 @@ const CHAT_TOPICS = ["Moving home", "My bill", "Smart meter", "Switching", "Mete
 
 // Local mock for now. Replace with the real vendor adapter later (see src/chat/README.md).
 const chatProvider = createMockChatProvider();
-
-function ResponsiveLandingPage() {
-  const [viewportWidth, setViewportWidth] = useState(() =>
-    typeof window === "undefined" ? DESKTOP_WIDTH : window.innerWidth,
-  );
-
-  useEffect(() => {
-    function updateViewportWidth() {
-      setViewportWidth(window.innerWidth);
-    }
-
-    window.addEventListener("resize", updateViewportWidth);
-    return () => window.removeEventListener("resize", updateViewportWidth);
-  }, []);
-
-  const isMobile = viewportWidth < 640;
-  const sourceWidth = isMobile ? MOBILE_WIDTH : DESKTOP_WIDTH;
-  const sourceHeight = isMobile ? MOBILE_HEIGHT : DESKTOP_HEIGHT;
-  const scale = Math.min(1, viewportWidth / sourceWidth);
-
-  return (
-    <div className="landing-viewport" style={{ height: sourceHeight * scale }}>
-      <div
-        className="landing-canvas"
-        style={{
-          height: sourceHeight,
-          transform: `translateX(-50%) scale(${scale})`,
-          width: sourceWidth,
-        }}
-      >
-        {isMobile ? <MobileLanding /> : <DesktopLanding />}
-      </div>
-    </div>
-  );
-}
 
 function ChatWidget() {
   const { messages, isAgentTyping, sendMessage } = useChatSession(chatProvider);
@@ -80,10 +42,24 @@ function ChatWidget() {
   );
 }
 
+/** Picks the page for the current address. Anything unknown shows the landing page. */
+function Pages() {
+  const pathname = usePathname();
+
+  // A new page should always start at the top.
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [pathname]);
+
+  if (pathname === ROUTES.businessEnergy) return <BusinessEnergyIntro />;
+  if (pathname === ROUTES.businessEnergyRegister) return <BusinessEnergyRegister />;
+  return <HomePage />;
+}
+
 export default function App() {
   return (
     <main className="landing-page">
-      <ResponsiveLandingPage />
+      <Pages />
       <ChatWidget />
     </main>
   );

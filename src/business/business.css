@@ -1,0 +1,1206 @@
+/* Business Energy pages: the intermediate pitch page and the registration form. */
+
+:root {
+  --bz-purple: #7100f1;
+  --bz-purple-dark: #5b00c4;
+  --bz-purple-50: #f5edff;
+  --bz-ink: #1a353e;
+  --bz-ink-strong: #001e28;
+  --bz-muted: #5f7076;
+  --bz-line: #e3dcee;
+  --bz-error: #b3261e;
+  /* Motion: a calm ease-out with no bounce (the "critically damped" default). */
+  --bz-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Press feedback is instant: the control reacts the moment it is pressed, not when it is released. */
+.bz-cta,
+.bz-btn,
+.bz-nav__item,
+.bz-menu__button,
+.bz-menu__link {
+  transition:
+    transform 100ms ease-out,
+    background-color 160ms ease;
+}
+
+.bz-cta:active,
+.bz-btn:active,
+.bz-menu__button:active {
+  transform: scale(0.97);
+}
+
+.bz-nav__item:active,
+.bz-menu__link:active {
+  transform: scale(0.98);
+}
+
+.bz-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Page frame ---------- */
+
+.bz-page {
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+  color: var(--bz-ink);
+  font-family: "Mundial:Regular", Arial, sans-serif;
+}
+
+/* The two big pale circles behind the content. */
+.bz-page::before,
+.bz-page::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  background: var(--bz-purple-50);
+  pointer-events: none;
+}
+
+.bz-page::before {
+  top: -160px;
+  right: -280px;
+  width: 760px;
+  height: 760px;
+}
+
+.bz-page::after {
+  top: 520px;
+  left: -440px;
+  width: 820px;
+  height: 820px;
+}
+
+.bz-header,
+.bz-body,
+.bz-footer {
+  position: relative;
+  z-index: 1;
+}
+
+.bz-body {
+  padding-bottom: 72px;
+}
+
+.bz-container {
+  width: min(1200px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.bz-narrow {
+  width: min(960px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+/* ---------- Header ---------- */
+
+.bz-header {
+  z-index: 20;
+  padding: 24px 16px 0;
+}
+
+.bz-header__bar {
+  display: flex;
+  width: min(1320px, 100%);
+  height: 60px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0 auto;
+  padding: 0 31px;
+  border-radius: 39px;
+  background: var(--bz-purple);
+  /* Soft drop shadow plus a faint bright top edge, like light catching the surface. */
+  box-shadow:
+    0 4px 8px rgba(113, 0, 241, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.bz-header__logo {
+  display: block;
+  flex: none;
+}
+
+.bz-header__logo img {
+  display: block;
+  width: 165px;
+  height: 29px;
+}
+
+.bz-nav,
+.bz-header__actions {
+  display: none;
+}
+
+.bz-nav {
+  align-items: center;
+  gap: 32px;
+}
+
+.bz-nav__item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  font-size: 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.bz-nav__item:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.bz-nav__item[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  bottom: 2px;
+  left: 10px;
+  height: 2px;
+  border-radius: 2px;
+  background: #ffffff;
+}
+
+.bz-nav__item:focus-visible,
+.bz-btn:focus-visible,
+.bz-menu__button:focus-visible,
+.bz-header__logo:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.bz-header__actions {
+  align-items: center;
+  gap: 14px;
+}
+
+.bz-btn {
+  display: inline-flex;
+  min-width: 109px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border: 1px solid #ffffff;
+  border-radius: 23px;
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bz-btn--outline-light {
+  background: transparent;
+  color: #ffffff;
+}
+
+.bz-btn--white {
+  background: #ffffff;
+  color: var(--bz-ink-strong);
+}
+
+/* "Help centre" in the header: the menu hangs under its button. */
+.bz-help {
+  position: relative;
+}
+
+.bz-chevron {
+  flex: none;
+  transition: transform 200ms var(--bz-ease);
+}
+
+.bz-chevron--open {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bz-chevron {
+    transition: none;
+  }
+}
+
+/* Phone and tablet menu button */
+.bz-menu {
+  position: relative;
+}
+
+.bz-menu__button {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.bz-menu__panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 60;
+  display: flex;
+  min-width: 220px;
+  flex-direction: column;
+  padding: 8px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow:
+    0 16px 40px rgba(0, 30, 40, 0.18),
+    0 2px 8px rgba(113, 0, 241, 0.12);
+}
+
+/* The panel grows out of the menu button (top right) and goes back into it. */
+.bz-menu__panel {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px) scale(0.96);
+  transform-origin: top right;
+  transition:
+    opacity 140ms ease,
+    transform 220ms var(--bz-ease),
+    visibility 0s linear 220ms;
+}
+
+.bz-menu__panel[data-open="true"] {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  transition:
+    opacity 140ms ease,
+    transform 220ms var(--bz-ease),
+    visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bz-menu__panel,
+  .bz-menu__panel[data-open="true"] {
+    transform: none;
+  }
+
+  .bz-menu__panel {
+    transition:
+      opacity 120ms ease,
+      visibility 0s linear 120ms;
+  }
+
+  .bz-menu__panel[data-open="true"] {
+    transition:
+      opacity 120ms ease,
+      visibility 0s;
+  }
+}
+
+.bz-menu__link {
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: var(--bz-ink-strong);
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.bz-menu__link:hover,
+.bz-menu__link[aria-current="page"] {
+  background: var(--bz-purple-50);
+  color: var(--bz-purple);
+}
+
+.bz-menu__link:focus-visible {
+  outline: 3px solid #d7b5fe;
+  outline-offset: 2px;
+}
+
+/* The full menu needs about 1280px to fit inside the pill. */
+@media (min-width: 1280px) {
+  .bz-nav,
+  .bz-header__actions {
+    display: flex;
+  }
+
+  .bz-header__menu {
+    display: none;
+  }
+}
+
+/* Below that the pill becomes a full-width bar with a menu button, like the landing page on phones. */
+@media (max-width: 1279px) {
+  .bz-header {
+    padding: 0;
+  }
+
+  .bz-header__bar {
+    width: 100%;
+    height: auto;
+    padding: 16px;
+    border-radius: 0;
+    box-shadow: 0 4px 2px rgba(202, 202, 202, 0.15);
+  }
+
+  .bz-header__logo img {
+    width: 133px;
+    height: 24px;
+  }
+}
+
+/* ---------- Shared bits ---------- */
+
+.bz-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #f1e4ff;
+  color: var(--bz-purple);
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: 0.75rem;
+  /* Small text gets a little extra letter spacing so it stays easy to read. */
+  letter-spacing: 0.02em;
+}
+
+.bz-cta {
+  display: inline-flex;
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 1.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--bz-purple);
+  color: #ffffff;
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.bz-cta:hover {
+  background: var(--bz-purple-dark);
+}
+
+.bz-cta:focus-visible {
+  outline: 3px solid #d7b5fe;
+  outline-offset: 3px;
+}
+
+.bz-cta:disabled {
+  background: #a97ae6;
+  cursor: progress;
+}
+
+.bz-section-title {
+  margin: 0;
+  color: var(--bz-ink-strong);
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: clamp(1.625rem, 3.4vw, 2.25rem);
+  font-weight: 600;
+  /* Bigger text sits tighter: less leading and slightly negative tracking. */
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.bz-section-intro {
+  max-width: 640px;
+  margin: 12px 0 0;
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+/* ---------- Business Energy page ---------- */
+
+.bz-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+  align-items: center;
+  gap: 2.5rem;
+  margin-top: 40px;
+  padding: 4rem;
+  overflow: hidden;
+  border-radius: 36px;
+  /* A soft pool of light behind the picture gives the hero some depth. */
+  background:
+    radial-gradient(60% 85% at 78% 45%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 70%),
+    var(--bz-purple);
+  color: #ffffff;
+  box-shadow:
+    0 1px 2px rgba(60, 0, 130, 0.2),
+    0 24px 48px -16px rgba(113, 0, 241, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+/* Two soft circles behind the content. */
+.bz-hero::before,
+.bz-hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.bz-hero::before {
+  top: -160px;
+  right: -120px;
+  width: 460px;
+  height: 460px;
+}
+
+.bz-hero::after {
+  bottom: -220px;
+  left: 30%;
+  width: 420px;
+  height: 420px;
+}
+
+.bz-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.bz-hero__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 22px;
+}
+
+.bz-hero h1 {
+  margin: 0;
+  color: #ffffff;
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: clamp(2.125rem, 4.2vw, 3.5rem);
+  font-weight: 600;
+  /* Large display text: tight leading and negative tracking. */
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-optical-sizing: auto;
+  text-wrap: balance;
+}
+
+.bz-hero h1 em {
+  color: #e4cdff;
+  font-style: normal;
+}
+
+.bz-hero__text p {
+  max-width: 520px;
+  margin: 0;
+  color: #f3e8ff;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.bz-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+  margin-top: 6px;
+}
+
+.bz-hero__minute {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #f3e8ff;
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+}
+
+.bz-cta--light {
+  background: #ffffff;
+  color: var(--bz-purple);
+}
+
+.bz-cta--light:hover {
+  background: var(--bz-purple-50);
+}
+
+.bz-cta--light:focus-visible {
+  outline-color: #ffffff;
+}
+
+/* The 3D picture in the hero. It sits on the purple background, so it is transparent PNG. */
+.bz-hero__image {
+  display: block;
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+  justify-self: center;
+  /* Two shadows: a tight one where the object meets the surface, and a wide soft one for height. */
+  filter: drop-shadow(0 2px 4px rgba(30, 0, 80, 0.3)) drop-shadow(0 28px 36px rgba(30, 0, 80, 0.35));
+}
+
+/* ---------- Entrance motion ---------- */
+/* Played once when the page opens. Only opacity and position change, so it stays smooth. */
+
+@keyframes bz-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes bz-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes bz-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.bz-hero__text > * {
+  animation: bz-rise 600ms var(--bz-ease) both;
+}
+
+.bz-hero__text > :nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.bz-hero__text > :nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.bz-hero__text > :nth-child(4) {
+  animation-delay: 180ms;
+}
+
+.bz-hero__image {
+  animation: bz-arrive 700ms var(--bz-ease) 120ms both;
+}
+
+.bz-closing {
+  animation: bz-rise 600ms var(--bz-ease) 240ms both;
+}
+
+/* Reduced motion keeps a gentle fade but drops all movement. */
+@media (prefers-reduced-motion: reduce) {
+  .bz-hero__text > *,
+  .bz-hero__image,
+  .bz-closing {
+    animation: bz-fade 200ms ease both;
+    animation-delay: 0ms;
+  }
+
+  .bz-cta:active,
+  .bz-btn:active,
+  .bz-menu__button:active,
+  .bz-nav__item:active,
+  .bz-menu__link:active {
+    transform: none;
+  }
+}
+
+/* Higher contrast: plain white text on the hero. */
+@media (prefers-contrast: more) {
+  .bz-hero h1 em,
+  .bz-hero__text p,
+  .bz-hero__minute {
+    color: #ffffff;
+  }
+}
+
+.bz-closing {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 72px;
+  padding: 2.5rem 3rem;
+  border-radius: 32px;
+  background: var(--bz-purple-50);
+  box-shadow:
+    0 1px 2px rgba(113, 0, 241, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+@media (max-width: 899px) {
+  .bz-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    padding: 40px 28px;
+  }
+
+  .bz-closing {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 639px) {
+  .bz-hero {
+    margin-top: 24px;
+    padding: 32px 22px;
+    border-radius: 28px;
+  }
+
+  .bz-hero__text p {
+    font-size: 17px;
+  }
+
+  .bz-hero__actions,
+  .bz-hero__actions .bz-cta,
+  .bz-closing .bz-cta {
+    width: 100%;
+  }
+
+  .bz-closing {
+    margin-top: 48px;
+  }
+}
+
+/* ---------- Registration form ---------- */
+
+.bz-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+  color: var(--bz-purple);
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.bz-back:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.bz-back:focus-visible {
+  outline: 3px solid #d7b5fe;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.bz-card-lg {
+  margin-top: 20px;
+  padding: 32px 36px;
+  border: 1px solid var(--bz-line);
+  border-radius: 28px;
+  background: #ffffff;
+}
+
+.bz-register-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.bz-register-intro h1 {
+  margin: 0;
+  color: #000000;
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: clamp(30px, 4.5vw, 40px);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.bz-register-intro p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.bz-form-section + .bz-form-section {
+  margin-top: 40px;
+}
+
+.bz-form h2 {
+  margin: 0 0 16px;
+  color: #000000;
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.bz-subheading {
+  margin: 28px 0 4px;
+  color: var(--bz-ink-strong);
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.bz-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.bz-legend {
+  display: block;
+  margin-bottom: 12px;
+  padding: 0;
+  color: var(--bz-ink-strong);
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: 14px;
+}
+
+.bz-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bz-pill {
+  position: relative;
+  cursor: pointer;
+}
+
+.bz-pill input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.bz-pill > span {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 28px;
+  border: 1px solid #cfc7dd;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #2b3b41;
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: 14px;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
+.bz-pill:hover > span {
+  border-color: var(--bz-purple);
+}
+
+.bz-pill input:checked + span {
+  border-color: var(--bz-purple);
+  background: var(--bz-purple);
+  color: #ffffff;
+}
+
+.bz-pill input:focus-visible + span {
+  outline: 3px solid #d7b5fe;
+  outline-offset: 2px;
+}
+
+.bz-pill__icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bz-infobox {
+  max-width: 480px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f7f7f7;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.bz-infobox p {
+  margin: 0;
+}
+
+.bz-infobox__title {
+  color: var(--bz-purple);
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+}
+
+.bz-infobox__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid #d9d9d9;
+  color: var(--bz-ink);
+}
+
+.bz-infobox__row svg {
+  flex: none;
+  color: var(--bz-purple);
+}
+
+.bz-infobox__note {
+  padding-top: 10px;
+  color: var(--bz-ink-strong);
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+}
+
+.bz-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 32px;
+  margin-top: 12px;
+}
+
+.bz-field--wide {
+  grid-column: 1 / -1;
+}
+
+.bz-field label {
+  display: block;
+  margin-bottom: 2px;
+  color: #4a5a60;
+  font-size: 13px;
+}
+
+.bz-field__optional {
+  color: var(--bz-muted);
+}
+
+.bz-field input,
+.bz-field select {
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 1px solid #b8b0c4;
+  border-radius: 0;
+  background-color: transparent;
+  color: var(--bz-ink-strong);
+  font-family: "Mundial:Regular", Arial, sans-serif;
+  /* 16px stops phones zooming in when a field is tapped. */
+  font-size: 16px;
+}
+
+.bz-field select {
+  padding-right: 28px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8' fill='none'%3E%3Cpath d='m1 1 6 6 6-6' stroke='%231a353e' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 4px center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.bz-field input:hover,
+.bz-field select:hover {
+  border-bottom-color: var(--bz-purple);
+}
+
+.bz-field input:focus-visible,
+.bz-field select:focus-visible {
+  border-bottom: 2px solid var(--bz-purple);
+  outline: 3px solid #d7b5fe;
+  outline-offset: 2px;
+}
+
+.bz-field--error label {
+  color: var(--bz-error);
+}
+
+.bz-field--error input,
+.bz-field--error select {
+  border-bottom: 2px solid var(--bz-error);
+}
+
+.bz-field__error {
+  margin: 6px 0 0;
+  color: var(--bz-error);
+  font-size: 13px;
+}
+
+.bz-followup {
+  margin-top: 28px;
+}
+
+.bz-radio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: var(--bz-ink-strong);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.bz-radio input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--bz-purple);
+  cursor: pointer;
+}
+
+.bz-form__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+  margin-top: 40px;
+}
+
+.bz-cta--submit {
+  min-width: 160px;
+}
+
+.bz-form__alert {
+  margin: 0;
+  color: var(--bz-error);
+  font-size: 15px;
+}
+
+/* Thank-you message */
+
+.bz-thanks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 40px;
+  padding: 48px;
+}
+
+.bz-thanks__icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--bz-purple-50);
+  color: var(--bz-purple);
+}
+
+.bz-thanks h1 {
+  margin: 0;
+  color: #000000;
+  font-family: "Mundial:Demibold", Arial, sans-serif;
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.bz-thanks h1:focus {
+  outline: none;
+}
+
+.bz-thanks p {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+@media (max-width: 639px) {
+  .bz-card-lg {
+    padding: 24px 20px;
+    border-radius: 24px;
+  }
+
+  .bz-thanks {
+    padding: 32px 20px;
+  }
+
+  .bz-form h2 {
+    font-size: 24px;
+  }
+
+  .bz-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .bz-pill,
+  .bz-pill > span {
+    width: 100%;
+  }
+
+  .bz-pill > span {
+    padding: 0 20px;
+  }
+
+  .bz-cta--submit {
+    width: 100%;
+  }
+}
+
+/* ---------- Footer ---------- */
+
+.bz-footer {
+  background: var(--bz-purple);
+  color: #f8f6f3;
+}
+
+.bz-footer__inner {
+  display: grid;
+  width: min(1280px, calc(100% - 48px));
+  grid-template-columns: 1.1fr 1.4fr 0.7fr 0.8fr;
+  gap: 40px;
+  margin: 0 auto;
+  padding: 48px 0 40px;
+}
+
+.bz-footer h2 {
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(248, 246, 243, 0.5);
+  font-family: "Mundial:Bold", Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.bz-footer__logo {
+  display: block;
+  width: 224px;
+  height: 39px;
+}
+
+.bz-footer__brand p {
+  margin: 24px 0 12px;
+  font-size: 14px;
+}
+
+.bz-footer__social {
+  display: flex;
+  max-width: 260px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bz-footer__social a {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+}
+
+.bz-footer__social a:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.bz-footer__social img {
+  display: block;
+  width: auto;
+  height: 24px;
+}
+
+.bz-footer__mask {
+  display: block;
+  width: 24px;
+  height: 24px;
+  background: #ffffff;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+}
+
+.bz-footer__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0 0 16px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.bz-footer__row img {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.bz-footer__cookies {
+  margin: 24px 0 0;
+  font-size: 12px;
+}
+
+.bz-footer__links ul {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  list-style: none;
+}
+
+.bz-footer__legal {
+  margin: 0;
+  padding: 16px;
+  border-top: 1px solid rgba(248, 246, 243, 0.5);
+  color: #ffffff;
+  font-size: 18px;
+  text-align: center;
+}
+
+@media (max-width: 899px) {
+  .bz-footer__inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bz-footer__brand,
+  .bz-footer__contact {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 479px) {
+  .bz-footer__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
