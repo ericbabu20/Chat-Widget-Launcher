@@ -1,0 +1,10 @@
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
+# The site uses page addresses such as /business-energy, so every address must load index.html.
+# (The same rule is also in public/_redirects.)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
