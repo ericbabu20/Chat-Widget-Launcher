@@ -1,7 +1,9 @@
-/** Words and data for the home page sections. */
-import { Award, Headset, Lightbulb, ShieldCheck, Sparkles, Tag, TrendingDown, type LucideIcon } from "lucide-react";
-
+﻿/** Words and data for the home page sections. */
 const ICONS = "/assets/home";
+const WF = "/assets/wf";
+
+/** Where "Rated ... on Trustpilot" links to. */
+export const TRUSTPILOT_PAGE = "https://uk.trustpilot.com/review/www.outfoxthemarket.co.uk";
 
 export type Review = {
   title: string;
@@ -113,56 +115,62 @@ export const TARIFFS: Tariff[] = [
 export const TARIFF_FOOTNOTE =
   "*Prices are based on Ofgem’s national Typical Domestic Consumption Values for medium energy use (2,700 kWh electricity and 11,500 kWh gas per year). Illustrative figures - your personalized quote is confirmed before you switch.";
 
+/** `icon` is the path of an icon file in public/assets/wf (exported from the design). */
 export type Feature = {
-  icon: LucideIcon;
+  icon: string;
   title: string;
   body: string;
 };
 
-export const PRICE_CAP_FEATURES: Feature[] = [
+/** Each price cap card has a 300 x 180 illustration (a file in public/assets/home), a title and a line of text. */
+export type PriceCapTile = Omit<Feature, "icon"> & { image: string };
+
+export const PRICE_CAP_FEATURES: PriceCapTile[] = [
   {
-    icon: ShieldCheck,
-    title: "Always below the cap",
-    body: "Your unit rates stay 5% lower than the Ofgem price cap.",
-  },
-  {
-    icon: TrendingDown,
+    image: "/assets/home/price-cap-drops.png",
     title: "Price drops when the cap drops",
-    body: "When the price cap changes, your rates adjust too.",
+    body: "If the price cap drops, your unit rates will drop too.",
   },
   {
-    icon: Sparkles,
-    title: "Built for smart dual fuel homes",
-    body: "Available for customers with gas, electricity and a smart meter.",
+    image: "/assets/home/price-cap-12-months.png",
+    title: "Save for 12 months",
+    body: "Benefit from below-cap rates for 12 months from the day you sign up.",
+  },
+  {
+    image: "/assets/home/price-cap-below-cap.png",
+    title: "Always below the price cap",
+    body: "Unit rates guaranteed to be at least 5% cheaper than the price cap.",
   },
 ];
-
 export const EV_FEATURES: Feature[] = [
   {
-    icon: Tag,
+    icon: `${WF}/ev-tag.svg`,
     title: "Discounted overnight rate",
     body: "Charge between midnight and 5am when electricity costs less.",
   },
   {
-    icon: Lightbulb,
+    icon: `${WF}/ev-sparkle.svg`,
     title: "Smarter energy use",
     body: "Use more of your electricity overnight, when demand on the grid is lower.",
   },
 ];
 
-export const WHY_OUTFOX_FEATURES: Feature[] = [
+/** Each "why" card shows a wide illustration (724 x 256) instead of an icon. */
+export type WhyFeature = Omit<Feature, "icon"> & { image: string };
+
+export const WHY_OUTFOX_FEATURES: WhyFeature[] = [
   {
-    icon: TrendingDown,
+    image: `${ICONS}/why-lower-prices.png`,
     title: "Unbeatable prices - always",
     body: "Why pay more for your energy? Enjoy the best prices with complete transparency and reduce your monthly costs.",
   },
   {
-    icon: Award,
+    image: `${ICONS}/why-excellent-service.png`,
     title: "Rated excellent for service",
     body: "Having the best prices does not mean you have to compromise on the quality of service. We're rated Excellent for a reason.",
   },
   {
-    icon: Headset,
+    image: `${ICONS}/why-real-support.png`,
     title: "Real people, real support",
     body: "Say goodbye to robotic replies. Our UK-based support team is friendly, fast, and always ready to help when you need us most.",
   },
@@ -215,8 +223,8 @@ export type OpeningHours = {
 };
 
 export const OPENING_HOURS: OpeningHours[] = [
-  { days: "Mon–Fri", hours: "08:30–17:00", open: true },
-  { days: "Saturday", hours: "09:00–14:00", open: true },
+  { days: "Mon–Fri", hours: "8:30am–5:00pm", open: true },
+  { days: "Saturday", hours: "9:00am–2:00pm", open: true },
   { days: "Sunday", hours: "Closed", open: false },
 ];
 

@@ -1,6 +1,5 @@
 import { ArrowRight, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import type { Feature } from "./content";
 
 /**
  * Small building blocks shared by the home page sections.
@@ -32,9 +31,9 @@ const PILL_VARIANTS = {
   outline: "border border-ink bg-transparent text-ink hover:bg-white focus-visible:outline-brand",
   // White outlined pill, for the purple header bar.
   "light-outline": "border border-white bg-transparent text-white hover:bg-white/15 focus-visible:outline-white",
-  // Outfox purple pills, for the Warm Home Discount card (white text on #7100f1 is about 7:1).
+  // Outfox purple pills (white text on #7100f1 is about 7:1).
   brand: "bg-brand text-white hover:bg-brand-dark focus-visible:outline-ink",
-  // Darker purple so the label stays AA-readable on the lilac card (about 6:1).
+  // Darker purple so the label stays AA-readable on a lilac fill (about 6:1).
   "brand-outline": "border border-brand-dark bg-transparent text-brand-dark hover:bg-white focus-visible:outline-ink",
 } as const;
 
@@ -47,7 +46,7 @@ const ARROW_CIRCLES = {
   "brand-outline": "bg-brand text-white",
 } as const;
 
-/** Every button on the page: a pill, with an optional round arrow, in the same style as the design brief. */
+/** The small pill buttons, used in the header's mobile menu. */
 export function PillButton({
   children,
   variant = "dark",
@@ -87,91 +86,115 @@ export function PillButton({
   );
 }
 
+type CtaButtonProps = {
+  children: ReactNode;
+  /** "primary" = purple gradient pill with a round arrow. "outline" = purple outlined pill. */
+  variant?: "primary" | "outline";
+  href?: string;
+  onClick?: () => void;
+  external?: boolean;
+  className?: string;
+};
+
+const CTA_BASE =
+  "inline-flex h-14 shrink-0 items-center justify-center gap-2.5 rounded-full text-xl leading-6 font-medium whitespace-nowrap " +
+  "transition-[filter,background-color,scale] duration-200 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 " +
+  "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand max-sm:w-full";
+
+const CTA_VARIANTS = {
+  // White text on the gradient is at least 7:1.
+  primary:
+    "min-w-[247px] border border-white/30 bg-[linear-gradient(179deg,#9b4cf5_3%,#7100f1_50%,#5900c2_97%)] px-[23px] text-white hover:brightness-110",
+  outline: "border border-brand px-[26px] text-brand hover:bg-white",
+} as const;
+
+/** The big call-to-action buttons used under section headings (56px tall, gradient or outlined). */
+export function CtaButton({ children, variant = "primary", href, onClick, external, className = "" }: CtaButtonProps) {
+  const classes = `${CTA_BASE} ${CTA_VARIANTS[variant]} ${className}`;
+  const content = (
+    <>
+      <span>{children}</span>
+      {variant === "primary" ? (
+        <span className="grid size-[22px] shrink-0 place-items-center rounded-full bg-white">
+          <img alt="" draggable={false} height={12} src="/assets/wf/arrow.svg" width={12} />
+        </span>
+      ) : null}
+    </>
+  );
+
+  if (href) {
+    return (
+      <a className={classes} href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <button className={classes} onClick={onClick} type="button">
+      {content}
+    </button>
+  );
+}
+
 type SectionProps = {
   id?: string;
   /** The id of the section's heading, so screen readers can name the section. */
   labelledBy: string;
   children: ReactNode;
   className?: string;
+  /** Up and down spacing. The design spaces each section a little differently, so a section can set its own. */
+  padding?: string;
 };
 
-/** A page section: 24px side padding, content up to 88rem wide. */
-export function Section({ id, labelledBy, children, className = "" }: SectionProps) {
+/** A page section: 24px side padding, content up to 1195px wide (the width used all through the design). */
+export function Section({ id, labelledBy, children, className = "", padding = "py-12 md:py-[82px]" }: SectionProps) {
   return (
-    <section aria-labelledby={labelledBy} className={`scroll-mt-6 px-6 py-16 md:py-24 ${className}`} id={id}>
-      <div className="rise mx-auto max-w-[88rem]">{children}</div>
+    <section aria-labelledby={labelledBy} className={`scroll-mt-24 px-6 ${padding} ${className}`} id={id}>
+      <div className="rise mx-auto w-full max-w-[1195px]">{children}</div>
     </section>
   );
 }
 
-type SplitHeaderProps = {
+/** The heading style used by every section: 56px bold on desktop, with an optional line of lighter text under it. */
+export const HEADING =
+  "text-[2.25rem] leading-[2.5rem] font-bold tracking-[-1px] md:text-[56px] md:leading-[56px] md:tracking-[-1.5px]";
+
+export const INTRO = "text-lg leading-6 font-light tracking-[-0.3px] text-[#314853] md:text-xl";
+
+type SectionHeaderProps = {
   id: string;
   title: ReactNode;
   intro?: ReactNode;
-  /** Buttons under the title, on the left. */
-  actions?: ReactNode;
+  /** Heading colour. The design uses Outfox Black, pure black or Outfox purple on different sections. */
+  tone?: "ink" | "black" | "brand";
+  className?: string;
 };
 
-/** The "Meet USD Halo." pattern: big title (and buttons) on the left, a larger paragraph on the right. */
-export function SplitHeader({ id, title, intro, actions }: SplitHeaderProps) {
+const HEADING_TONES = { ink: "text-ink", black: "text-black", brand: "text-brand" } as const;
+
+/** A section heading with its short paragraph underneath. */
+export function SectionHeader({ id, title, intro, tone = "ink", className = "" }: SectionHeaderProps) {
   return (
-    <div className="mb-10 grid grid-cols-1 items-start gap-6 md:mb-16 md:grid-cols-2 md:gap-12">
-      <div>
-        <h2 className="text-4xl leading-tight font-medium tracking-[-0.03em] text-balance text-ink md:text-5xl" id={id}>
-          {title}
-        </h2>
-        {actions ? <div className="mt-8 flex flex-wrap gap-3">{actions}</div> : null}
-      </div>
-      {intro ? <p className="text-xl leading-relaxed text-ink/70 md:text-3xl">{intro}</p> : null}
+    <div className={`flex flex-col gap-4 ${className}`}>
+      <h2 className={`${HEADING} ${HEADING_TONES[tone]}`} id={id}>
+        {title}
+      </h2>
+      {intro ? <p className={INTRO}>{intro}</p> : null}
     </div>
   );
 }
 
-type FeatureTileProps = {
-  feature: Feature;
-  tone: "ink" | "tint";
-  className?: string;
-};
-
-const TILE_TONES = {
-  ink: {
-    box: "bg-ink text-white",
-    chip: "bg-white/10 text-white",
-    body: "text-white/70",
-  },
-  // Soft lilac with a circle device from the brand's graphic language.
-  tint: {
-    box:
-      "bg-[radial-gradient(circle_at_88%_12%,#c9a6fb_0,#c9a6fb_9rem,transparent_9.05rem),linear-gradient(135deg,#f1e5ff,#dfc8fd)] text-ink",
-    chip: "bg-white text-brand",
-    body: "text-ink/75",
-  },
-} as const;
-
-/** A card with the title at the top and the explanation at the bottom. */
-export function FeatureTile({ feature, tone, className = "" }: FeatureTileProps) {
-  const { icon: Icon, title, body } = feature;
-  const styles = TILE_TONES[tone];
-
-  return (
-    <li className={`flex min-h-80 flex-col justify-between rounded-2xl p-7 ${styles.box} ${className}`}>
-      <div>
-        <span className={`mb-5 grid size-12 place-items-center rounded-full ${styles.chip}`}>
-          <Icon aria-hidden="true" className="size-6" />
-        </span>
-        <h3 className="text-2xl leading-snug font-medium tracking-[-0.02em]">{title}</h3>
-      </div>
-      <p className={`max-w-xs text-base ${styles.body}`}>{body}</p>
-    </li>
-  );
-}
-
-/** Five Trustpilot-green stars. Decorative: the rating is also given as text. */
-export function Stars() {
+/** Five Trustpilot-green stars. Decorative: the rating is also given as text. `size` is each star's box in px. */
+export function Stars({ size = 17 }: { size?: number }) {
   return (
     <span aria-hidden="true" className="inline-flex gap-0.5">
       {[0, 1, 2, 3, 4].map((index) => (
-        <span className="grid size-[1.0625rem] place-items-center rounded-[3px] bg-[#00b67a]" key={index}>
+        <span
+          className="grid place-items-center rounded-[3px] bg-[#00b67a]"
+          key={index}
+          style={{ height: size, width: size }}
+        >
           <img alt="" draggable={false} height={13} src="/assets/home/tp-star.svg" width={13} />
         </span>
       ))}
@@ -199,4 +222,3 @@ export function Marquee({ children, label }: { children: ReactNode; label: strin
     </div>
   );
 }
-

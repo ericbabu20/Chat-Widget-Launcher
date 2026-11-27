@@ -10,30 +10,38 @@ type Flake = {
   rest: string;
 };
 
-// Fixed, so the flakes don't jump around when the page re-renders.
-const FLAKES: Flake[] = [
-  { left: "6%", size: 7, duration: 13, delay: -2, drift: 16, opacity: 0.95, rest: "12%" },
-  { left: "14%", size: 5, duration: 16, delay: -9, drift: -12, opacity: 0.75, rest: "38%" },
-  { left: "22%", size: 9, duration: 11, delay: -4, drift: 22, opacity: 0.9, rest: "64%" },
-  { left: "31%", size: 5, duration: 15, delay: -11, drift: 8, opacity: 0.7, rest: "22%" },
-  { left: "39%", size: 8, duration: 12, delay: -1, drift: -18, opacity: 0.95, rest: "78%" },
-  { left: "48%", size: 5, duration: 17, delay: -7, drift: 14, opacity: 0.7, rest: "48%" },
-  { left: "56%", size: 10, duration: 14, delay: -5, drift: -10, opacity: 0.85, rest: "8%" },
-  { left: "64%", size: 6, duration: 12, delay: -10, drift: 20, opacity: 0.9, rest: "56%" },
-  { left: "72%", size: 5, duration: 18, delay: -3, drift: -16, opacity: 0.75, rest: "30%" },
-  { left: "80%", size: 8, duration: 13, delay: -8, drift: 12, opacity: 0.9, rest: "86%" },
-  { left: "88%", size: 5, duration: 15, delay: -6, drift: -8, opacity: 0.75, rest: "18%" },
-  { left: "94%", size: 7, duration: 11, delay: -12, drift: 18, opacity: 0.85, rest: "70%" },
-];
+const FLAKE_COUNT = 36;
+
+// A small seeded random number generator. The same seed always gives the same snow, so it never changes between visits.
+function seededRandom(seed: number) {
+  let state = seed;
+  return () => {
+    state = (state * 16807) % 2147483647;
+    return (state - 1) / 2147483646;
+  };
+}
+
+const random = seededRandom(7);
+
+// Spread evenly across the width, with a little jitter so the rows don't look like a grid.
+const FLAKES: Flake[] = Array.from({ length: FLAKE_COUNT }, (_, index) => ({
+  left: `${((index + 0.5) / FLAKE_COUNT) * 100 + (random() - 0.5) * 4}%`,
+  size: 4 + Math.round(random() * 6),
+  duration: 10 + random() * 9,
+  delay: -random() * 20,
+  drift: Math.round((random() - 0.5) * 44),
+  opacity: 0.7 + random() * 0.3,
+  rest: `${Math.round(random() * 95)}%`,
+}));
 
 /** A light snowfall, meant to sit inside the Christmas hero picture. */
 export function HeroSnow() {
   return (
     <div aria-hidden="true" className="hero-snow">
-      {FLAKES.map((flake) => (
+      {FLAKES.map((flake, index) => (
         <span
           className="hero-snow__flake"
-          key={flake.left}
+          key={index}
           style={
             {
               left: flake.left,

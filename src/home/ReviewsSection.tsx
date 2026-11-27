@@ -1,9 +1,7 @@
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { type CSSProperties, type PointerEvent, type RefObject, useCallback, useEffect, useRef } from "react";
+﻿import { type CSSProperties, type PointerEvent, type RefObject, useCallback, useEffect, useRef } from "react";
 import { useMediaQuery } from "../chat/useMediaQuery";
-import { REVIEWS, type Review } from "./content";
-import { TrustpilotRating } from "./TrustpilotRating";
-import { SplitHeader, Stars } from "./ui";
+import { REVIEWS, type Review, TRUSTPILOT_PAGE } from "./content";
+import { SectionHeader, Stars } from "./ui";
 
 // How fast the cards drift sideways on their own (pixels per second). Slow enough to read as they pass.
 const AUTO_SPEED = 40;
@@ -196,22 +194,22 @@ function ReviewCard({ review, repeat = false }: { review: Review; repeat?: boole
     // The repeated set only exists to make the loop seamless, so screen readers skip it.
     <li
       aria-hidden={repeat ? true : undefined}
-      className="relative flex w-[min(24rem,82vw)] shrink-0 flex-col gap-4 rounded-2xl bg-white p-7"
+      className="relative flex min-h-[243px] w-[min(388px,82vw)] shrink-0 flex-col gap-[12.7px] rounded-[20px] border border-[#e5e8e9] bg-white pt-[27px] pr-[27px] pb-[25px] pl-[27px] drop-shadow-[0_4px_8px_rgb(0_0_0/0.05)]"
     >
       <Stars />
       <span className="sr-only">Rated 5 out of 5</span>
-      <h3 className="text-xl leading-snug font-medium tracking-[-0.02em] text-ink">{review.title}</h3>
-      <p className="flex-1 text-base leading-relaxed text-ink/70">{review.body}</p>
-      <div className="mt-2 flex items-center gap-3">
+      <h3 className="text-lg leading-[25.2px] font-medium tracking-[-0.18px] text-ink">{review.title}</h3>
+      <p className="flex-1 text-sm leading-[21.7px] text-[#314853]">{review.body}</p>
+      <div className="flex items-center gap-[11px] pt-1">
         <span
           aria-hidden="true"
-          className="grid size-10 shrink-0 place-items-center rounded-full bg-[#f1e5ff] text-base font-medium text-brand"
+          className="grid size-[38px] shrink-0 place-items-center rounded-full bg-[#e5d6fc] text-[15px] leading-[15px] font-medium text-brand"
         >
           {review.name.charAt(0)}
         </span>
-        <span className="flex flex-col">
-          <span className="text-base leading-tight font-medium text-ink">{review.name}</span>
-          <span className="text-sm text-ink/70">{review.when}</span>
+        <span className="flex flex-col gap-0.5">
+          <span className="text-sm leading-[16.8px] font-medium text-ink">{review.name}</span>
+          <span className="text-xs leading-[14.4px] text-[#314853]">{review.when}</span>
         </span>
       </div>
     </li>
@@ -219,10 +217,9 @@ function ReviewCard({ review, repeat = false }: { review: Review; repeat?: boole
 }
 
 const ROUND_BUTTON =
-  "grid size-12 place-items-center rounded-full border border-ink bg-white text-ink transition-[background-color,scale] duration-200 " +
+  "grid size-12 place-items-center rounded-full border border-[#b0bbc2] bg-white transition-[background-color,scale] duration-200 " +
   "hover:bg-[#f1e5ff] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand " +
   "motion-reduce:transition-none motion-reduce:active:scale-100";
-
 export function ReviewsSection() {
   const scrollerRef = useRef<HTMLUListElement>(null);
   const lastInteraction = useRef(0);
@@ -244,25 +241,25 @@ export function ReviewsSection() {
   }
 
   return (
-    <section aria-labelledby="reviews-heading" className="py-16 md:py-24">
-      <div className="mx-auto max-w-[88rem] px-6">
-        <SplitHeader
+    <section aria-labelledby="reviews-heading" className="scroll-mt-24 py-12 md:pt-[112px] md:pb-[82px]">
+      <div className="mx-auto max-w-[1243px] px-6">
+        <SectionHeader
           id="reviews-heading"
           intro="Real feedback from customers who switched to Outfox Energy and are now paying less for the same energy."
           title="Join thousands paying less for their energy"
         />
       </div>
 
-      {/* The cards start in line with the page content and slide left. Anything left of the content edge is hidden,
+      {/* The cards start at the page edge and slide left. Anything left of the edge is hidden,
           so a card never pops in or out at the very edge of the screen. */}
       <ul
         aria-label="Customer reviews"
-        className="flex scroll-px-(--edge) gap-4 overflow-x-auto overscroll-x-contain px-(--edge) pb-2 [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-brand data-[dragging]:cursor-grabbing data-[dragging]:select-none pointer-fine:cursor-grab [&::-webkit-scrollbar]:hidden"
+        className="mt-10 flex scroll-px-(--edge) gap-5 overflow-x-auto overscroll-x-contain px-(--edge) pb-2 [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-brand data-[dragging]:cursor-grabbing data-[dragging]:select-none pointer-fine:cursor-grab [&::-webkit-scrollbar]:hidden"
         onDragStart={(event) => event.preventDefault()}
         ref={scrollerRef}
         style={
           {
-            "--edge": "max(1.5rem, calc((100% - 88rem) / 2 + 1.5rem))",
+            "--edge": "1.5rem",
             maskImage: "linear-gradient(to right, transparent calc(var(--edge) - 1rem), #000 calc(var(--edge) - 1rem))",
             WebkitMaskImage:
               "linear-gradient(to right, transparent calc(var(--edge) - 1rem), #000 calc(var(--edge) - 1rem))",
@@ -279,16 +276,27 @@ export function ReviewsSection() {
           : null}
       </ul>
 
-      <div className="mx-auto mt-10 flex max-w-[88rem] flex-col items-center gap-6 px-6 md:flex-row md:justify-between">
-        <div className="w-full md:w-auto">
-          <TrustpilotRating align="start" />
+      <div className="mx-auto mt-6 flex max-w-[1243px] flex-col gap-5 px-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <Stars size={18} />
+          <a
+            className="rounded-sm text-[13px] leading-[16.9px] text-[#314853] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
+            href={TRUSTPILOT_PAGE}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Rated <strong className="font-medium text-ink">4.7 / 5</strong> · based on{" "}
+            <strong className="font-medium text-ink">52,900+</strong> reviews on{" "}
+            <strong className="font-medium text-ink">Trustpilot</strong>
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2.5">
           <button aria-label="Previous reviews" className={ROUND_BUTTON} onClick={() => step(-1)} type="button">
-            <ArrowLeft aria-hidden="true" className="size-5" />
+            <img alt="" className="size-5 rotate-180" height={20} src="/assets/wf/arrow-next.svg" width={20} />
           </button>
           <button aria-label="Next reviews" className={ROUND_BUTTON} onClick={() => step(1)} type="button">
-            <ArrowRight aria-hidden="true" className="size-5" />
+            <img alt="" className="size-5" height={20} src="/assets/wf/arrow-next.svg" width={20} />
           </button>
         </div>
       </div>

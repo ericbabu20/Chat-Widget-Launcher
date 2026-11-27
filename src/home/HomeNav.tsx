@@ -1,13 +1,14 @@
-import { ChevronDown, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { openSupportChat } from "../openChat";
 import { AppLink, ROUTES } from "../router";
 import { PHONE } from "./content";
 import { PillButton } from "./ui";
 
-const LOGO = "/assets/home/footer-logo.svg"; // the white logo, for the purple bar
+const LOGO = "/assets/hero/logo-white.svg"; // the white logo, for the purple bar
+const CHEVRON = "/assets/wf/chevron.svg"; // points right in the file, turned to point down
 
-/** How far the page must scroll before the full-width bar turns into the floating pill. */
+/** How far the page must scroll before the full-width bar turns into the floating oval. */
 const SCROLL_THRESHOLD = 24;
 
 type MenuItem = {
@@ -23,7 +24,7 @@ type NavMenu = { label: string; items: MenuItem[] };
 // These menus only point at things that already exist on this page, the chat and the phone number.
 const MENUS: NavMenu[] = [
   {
-    label: "About us",
+    label: "About Us",
     items: [
       { label: "Why Outfox", href: "#why" },
       { label: "How it works", href: "#steps" },
@@ -44,7 +45,7 @@ const MENUS: NavMenu[] = [
     ],
   },
   {
-    label: "Help centre",
+    label: "Help Center",
     items: [
       { label: "Chat with us", onSelect: openSupportChat },
       { label: `Call ${PHONE.label}`, href: PHONE.href },
@@ -53,8 +54,8 @@ const MENUS: NavMenu[] = [
 ];
 
 const TOP_LINK =
-  "inline-flex items-center gap-1.5 rounded-full px-1 py-2 text-base font-medium text-white transition-opacity duration-200 hover:opacity-80 " +
-  "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white motion-reduce:transition-none";
+  "inline-flex items-center gap-2 rounded-full p-2.5 text-base leading-5 font-normal whitespace-nowrap text-white transition-colors duration-200 hover:bg-white/15 " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none";
 
 const ITEM_CLASS =
   "block w-full rounded-xl px-4 py-3 text-left text-base font-medium text-ink hover:bg-canvas " +
@@ -67,8 +68,8 @@ type HomeNavProps = {
 
 /**
  * The page header. At the top of the page it is a full-width purple bar.
- * Once the visitor scrolls it shrinks into a floating, rounded "glass" pill that stays on screen.
- * Links on large screens, a menu button below that.
+ * Once the visitor scrolls it shrinks into a floating oval that stays on screen.
+ * Links and the two buttons on large screens, a menu button below that.
  */
 export function HomeNav({ onGetQuote }: HomeNavProps) {
   const [scrolled, setScrolled] = useState(false);
@@ -132,29 +133,32 @@ export function HomeNav({ onGetQuote }: HomeNavProps) {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-30 transition-[padding] duration-300 ease-out motion-reduce:transition-none ${
-        scrolled ? "px-4 pt-3 md:px-[max(1.5rem,calc((100%-88rem)/2))]" : "px-0 pt-0"
+        scrolled ? "px-4 pt-3 md:px-[60px] md:pt-[25px]" : "px-0 pt-0"
       }`}
       ref={rootRef}
     >
-      {/* The glass: a see-through purple with a blur behind it. Solid purple if the visitor asks for less transparency. */}
       <nav
         aria-label="Main"
-        className={`relative bg-brand/80 backdrop-blur-xl backdrop-saturate-150 transition-[border-radius,box-shadow] duration-300 ease-out motion-reduce:transition-none [@media(prefers-reduced-transparency:reduce)]:bg-brand [@media(prefers-reduced-transparency:reduce)]:backdrop-blur-none ${
-          scrolled
-            ? "rounded-full shadow-[inset_0_1px_0_rgb(255_255_255/0.28),0_10px_36px_rgb(60_0_130/0.28)]"
-            : "rounded-none shadow-[inset_0_-1px_0_rgb(255_255_255/0.14)]"
+        className={`relative bg-brand transition-[border-radius,box-shadow] duration-300 ease-out motion-reduce:transition-none ${
+          scrolled ? "rounded-full shadow-[0_10px_30px_rgb(60_0_130/0.28)]" : "rounded-none"
         }`}
       >
-        <div className="flex h-20 items-center justify-between gap-6 px-6 md:px-8">
+        <div
+          className={`flex items-center justify-between gap-4 transition-[height,padding] duration-300 ease-out motion-reduce:transition-none ${
+            scrolled
+              ? "h-16 pr-3 pl-5 md:h-20 md:px-[31px]"
+              : "h-16 px-6 md:h-20 md:px-10 min-[1400px]:px-[91px]"
+          }`}
+        >
           <AppLink
             aria-label="Outfox Energy home"
             className="rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             to={ROUTES.home}
           >
-            <img alt="" className="h-7 w-auto" height={39} src={LOGO} width={224} />
+            <img alt="" className="h-auto w-[140px] md:w-[165px]" height={29} src={LOGO} width={165} />
           </AppLink>
 
-          <ul className="hidden items-center gap-7 lg:flex">
+          <ul className="hidden items-center gap-[18px] xl:flex">
             {MENUS.map((menu) => {
               const isOpen = openMenu === menu.label;
               const menuId = `${panelId}-${menu.label.replace(/\s+/g, "-")}`;
@@ -174,15 +178,20 @@ export function HomeNav({ onGetQuote }: HomeNavProps) {
                     type="button"
                   >
                     {menu.label}
-                    <ChevronDown
-                      aria-hidden="true"
-                      className={`size-4 transition-transform duration-200 motion-reduce:transition-none ${isOpen ? "rotate-180" : ""}`}
-                    />
+                    <span aria-hidden="true" className="grid h-2 w-[13.6px] place-items-center">
+                      <img
+                        alt=""
+                        className={`h-[12.88px] w-[7.23px] max-w-none transition-transform duration-200 motion-reduce:transition-none ${isOpen ? "-rotate-90" : "rotate-90"}`}
+                        height={13}
+                        src={CHEVRON}
+                        width={7}
+                      />
+                    </span>
                   </button>
 
                   {isOpen ? (
                     <ul
-                      className="absolute top-full left-1/2 mt-4 w-60 -translate-x-1/2 rounded-2xl bg-white p-2 shadow-[0_12px_40px_rgb(0_30_40/0.18)]"
+                      className="absolute top-full left-1/2 mt-3 w-60 -translate-x-1/2 rounded-2xl bg-white p-2 shadow-[0_12px_40px_rgb(0_30_40/0.18)]"
                       id={menuId}
                     >
                       {menu.items.map((item) => (
@@ -205,23 +214,32 @@ export function HomeNav({ onGetQuote }: HomeNavProps) {
             })}
             <li>
               <AppLink className={TOP_LINK} to={ROUTES.businessEnergy}>
-                Business energy
+                Connect
               </AppLink>
             </li>
           </ul>
 
-          <div className="hidden items-center gap-3 lg:flex">
-            <PillButton onClick={onGetQuote} variant="light-outline">
-              Get a quote
-            </PillButton>
-            <PillButton variant="light">Sign in</PillButton>
+          <div className="hidden items-center gap-4 xl:flex">
+            <button
+              className="inline-flex h-[46px] items-center rounded-full border border-white px-[18px] text-base leading-5 font-normal text-white transition-colors duration-200 hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
+              onClick={onGetQuote}
+              type="button"
+            >
+              Quote Me
+            </button>
+            <button
+              className="inline-flex h-[46px] items-center rounded-full bg-white px-[30px] text-base leading-5 font-normal text-ink transition-colors duration-200 hover:bg-[#f1e5ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
+              type="button"
+            >
+              Sign In
+            </button>
           </div>
 
           <button
             aria-controls={panelId}
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            className="grid size-11 place-items-center rounded-full bg-white text-brand transition-[background-color,scale] duration-200 hover:bg-[#f1e5ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100 lg:hidden"
+            className="grid size-11 place-items-center rounded-full bg-white text-brand transition-[background-color,scale] duration-200 hover:bg-[#f1e5ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-95 motion-reduce:transition-none motion-reduce:active:scale-100 xl:hidden"
             onClick={() => {
               setOpenMenu(null);
               setMobileOpen((value) => !value);
@@ -235,7 +253,7 @@ export function HomeNav({ onGetQuote }: HomeNavProps) {
 
         {mobileOpen ? (
           <div
-            className="absolute top-full right-3 mt-2 max-h-[calc(100svh-6rem)] w-full max-w-sm overflow-y-auto rounded-2xl bg-white p-3 shadow-[0_12px_40px_rgb(0_30_40/0.18)] lg:hidden"
+            className="absolute top-full right-3 mt-2 max-h-[calc(100svh-6rem)] w-full max-w-sm overflow-y-auto rounded-2xl bg-white p-3 shadow-[0_12px_40px_rgb(0_30_40/0.18)] xl:hidden"
             id={panelId}
           >
             {MENUS.map((menu) => (
@@ -259,14 +277,14 @@ export function HomeNav({ onGetQuote }: HomeNavProps) {
               </div>
             ))}
             <AppLink className={`${ITEM_CLASS} py-2.5`} onClick={closeAll} to={ROUTES.businessEnergy}>
-              Business energy
+              Connect
             </AppLink>
             <div className="mt-2 flex flex-col gap-2 border-t border-ink/10 pt-3">
               <PillButton className="w-full" onClick={chooseQuote} variant="brand">
-                Get a quote
+                Quote Me
               </PillButton>
               <PillButton className="w-full" variant="brand-outline">
-                Sign in
+                Sign In
               </PillButton>
             </div>
           </div>

@@ -1189,3 +1189,59 @@
     translate: 0 0;
   }
 }
+
+/* "Why Outfox" cards. Under 1024px they sit in a swipeable row and each card eases up to full size as it reaches the
+  middle of the screen. From 1024px up all three show, sliding in one after another as the section scrolls into view.
+  Only where the browser supports it, and never for people who have asked their device to reduce motion. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @media (max-width: 1023.98px) {
+      .why-item {
+        animation: why-focus linear both;
+        animation-timeline: view(inline);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .why-item {
+        animation: why-slide linear both;
+        animation-range: entry 0% entry 55%;
+        animation-timeline: view();
+      }
+
+      .why-item:nth-child(2) {
+        animation-range: entry 8% entry 63%;
+      }
+
+      .why-item:nth-child(3) {
+        animation-range: entry 16% entry 71%;
+      }
+    }
+  }
+}
+
+@keyframes why-focus {
+  0%,
+  100% {
+    opacity: 0.5;
+    scale: 0.93;
+  }
+
+  30%,
+  70% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes why-slide {
+  from {
+    opacity: 0;
+    translate: 3rem 0;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
